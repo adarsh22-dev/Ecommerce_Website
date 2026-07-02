@@ -1,0 +1,355 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap");
+
+@layer base {
+  * {
+    border-color: theme("colors.border");
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+
+  ::selection {
+    @apply bg-primary/10 text-primary;
+  }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-primary/40 ring-offset-2;
+  }
+}
+
+@layer components {
+  .container-xl {
+    @apply mx-auto w-full max-w-[1440px] px-6 lg:px-16;
+  }
+
+  .section-padding {
+    @apply py-16 lg:py-24;
+  }
+
+  .btn-primary {
+    @apply relative overflow-hidden inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3 text-sm font-medium text-primary-foreground transition-all duration-200 hover:bg-primary/90 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg border border-border bg-white px-6 py-3 text-sm font-medium text-foreground transition-all duration-200 hover:bg-muted active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2;
+  }
+
+  .btn-destructive {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg bg-destructive px-6 py-3 text-sm font-medium text-destructive-foreground transition-all duration-200 hover:bg-destructive/90 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-destructive/40 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50;
+  }
+
+  .btn-sm {
+    @apply px-4 py-2 text-xs;
+  }
+
+  .btn-lg {
+    @apply px-8 py-4 text-base;
+  }
+
+  .btn-icon {
+    @apply h-10 w-10 p-0;
+  }
+
+  .input-field {
+    @apply flex h-12 w-full rounded-lg border border-border bg-white px-4 py-3 text-sm text-foreground placeholder:text-foreground-secondary/50 transition-all duration-200 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .input-label {
+    @apply block text-sm font-medium text-foreground mb-2;
+  }
+
+  .input-error {
+    @apply border-destructive focus:border-destructive focus:ring-destructive/20;
+  }
+
+  .error-text {
+    @apply text-xs text-destructive mt-1.5;
+  }
+
+  .card {
+    @apply rounded-xl bg-white border border-[rgba(0,0,0,0.06)] shadow-card;
+  }
+
+  .card-hover {
+    @apply transition-all duration-300 hover:shadow-card-hover hover:-translate-y-0.5;
+  }
+
+  .badge {
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium;
+  }
+
+  .badge-primary {
+    @apply bg-primary/10 text-primary;
+  }
+
+  .badge-success {
+    @apply bg-success/10 text-success;
+  }
+
+  .badge-warning {
+    @apply bg-yellow-100 text-yellow-800;
+  }
+
+  .badge-destructive {
+    @apply bg-destructive/10 text-destructive;
+  }
+
+  .badge-neutral {
+    @apply bg-muted text-foreground-secondary;
+  }
+
+  /* Shimmer effect for buttons */
+  .shimmer-btn {
+    @apply relative overflow-hidden;
+  }
+
+  .shimmer-btn::after {
+    content: "";
+    @apply absolute inset-0;
+    background: linear-gradient(
+      105deg,
+      transparent 40%,
+      rgba(255, 255, 255, 0.2) 45%,
+      rgba(255, 255, 255, 0.3) 50%,
+      rgba(255, 255, 255, 0.2) 55%,
+      transparent 60%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 2.5s infinite;
+  }
+
+  /* Skeleton loading */
+  .skeleton {
+    @apply relative overflow-hidden rounded-lg bg-muted;
+  }
+
+  .skeleton::after {
+    content: "";
+    @apply absolute inset-0;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.5),
+      transparent
+    );
+    animation: skeleton-shimmer 1.5s infinite;
+  }
+
+  /* Floating label input */
+  .floating-label-group {
+    @apply relative;
+  }
+
+  .floating-label-group input:focus ~ label,
+  .floating-label-group input:not(:placeholder-shown) ~ label {
+    @apply -translate-y-6 scale-75 text-primary;
+  }
+
+  .floating-label-group label {
+    @apply absolute left-4 top-3 text-sm text-foreground-secondary transition-all duration-200 pointer-events-none origin-left;
+  }
+
+  /* Scrollbar styles */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-foreground/10 rounded-full;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    @apply bg-foreground/20;
+  }
+
+  /* Horizontal scroll for mobile */
+  .scroll-snap-x {
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .scroll-snap-x > * {
+    scroll-snap-align: start;
+  }
+
+  /* Glass effect */
+  .glass {
+    @apply bg-white/80 backdrop-blur-xl border border-white/20;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .animate-in {
+    animation: fadeUp 0.6s ease-out forwards;
+  }
+}
+
+@layer components {
+  /* Admin sidebar active indicator */
+  .admin-sidebar-link.active {
+    @apply bg-primary/5 text-primary;
+  }
+
+  .admin-sidebar-link.active::before {
+    content: "";
+    @apply absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 bg-primary rounded-r-full;
+  }
+
+  /* Admin table styles */
+  .admin-table {
+    @apply w-full;
+  }
+
+  .admin-table th {
+    @apply text-left text-xs font-medium text-foreground-secondary p-4 border-b border-border bg-muted/30;
+  }
+
+  .admin-table td {
+    @apply p-4 border-b border-border text-sm;
+  }
+
+  .admin-table tr:last-child td {
+    @apply border-b-0;
+  }
+
+  .admin-table tr:hover td {
+    @apply bg-muted/30;
+  }
+
+  /* Admin card hover */
+  .admin-card {
+    @apply bg-white rounded-xl border border-border shadow-sm transition-all duration-200;
+  }
+
+  .admin-card:hover {
+    @apply shadow-md;
+  }
+
+  /* Admin stat card */
+  .admin-stat-card {
+    @apply bg-white rounded-xl border border-border p-5 transition-all duration-200;
+  }
+
+  .admin-stat-card:hover {
+    @apply shadow-md -translate-y-0.5;
+  }
+
+  /* Sidebar scrollbar */
+  .admin-sidebar-scroll {
+    @apply overflow-y-auto;
+    scrollbar-width: thin;
+    scrollbar-color: theme("colors.foreground/10") transparent;
+  }
+
+  .admin-sidebar-scroll::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .admin-sidebar-scroll::-webkit-scrollbar-thumb {
+    @apply bg-foreground/10 rounded-full;
+  }
+}
+
+@keyframes skeleton-shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes fadeUp {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pulseBadge {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+}
+
+/* =====================================================
+   Custom Responsive Overrides
+   ===================================================== */
+
+/* Override lg:px-6 to apply padding on all sides at lg breakpoint */
+@media (min-width: 1024px) {
+  .lg\:px-6 {
+    padding-top: 1.5rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    padding-bottom: 1.5rem;
+  }
+}
+
+/* Override sm:w-64 to a narrower width at sm breakpoint */
+@media (min-width: 640px) {
+  .sm\:w-64 {
+    width: 200px !important;
+  }
+}
+
+/* Override py-16 to 16px padding on all sides */
+.py-16 {
+  padding: 16px;
+}

@@ -1,0 +1,7 @@
+title,slug,description,category_id,price,sale_price,sku,stock_quantity,status
+Wireless Headphones Pro,wireless-headphones-pro,Premium noise-cancelling wireless headphones with 30-hour battery life,c1,349.99,299.99,ELEC-001,50,active
+Minimalist Leather Watch,minimalist-leather-watch,Elegant timepiece with genuine leather strap and Japanese movement,c4,199.99,,ACC-001,30,active
+Cotton Premium T-Shirt,cotton-premium-tshirt,Ultra-soft organic cotton tee with a modern tailored fit,c2,49.99,39.99,CLTH-001,100,active
+Ceramic Coffee Set,ceramic-coffee-set,Handcrafted ceramic pour-over coffee set with carafe and cups,c3,89.99,,HOME-001,25,active
+Smart Fitness Tracker,smart-fitness-tracker,Track your health metrics with this sleek waterproof fitness band,c1,129.99,,ELEC-002,75,active
+Wool Blend Blazer,wool-blend-blazer,Sophisticated tailored blazer crafted from Italian wool blend,c2,299.99,249.99,CLTH-002,20,active

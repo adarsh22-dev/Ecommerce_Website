@@ -1,0 +1,30 @@
+name: E2E Tests
+
+on:
+  schedule:
+    - cron: "0 6 * * 1" # Every Monday at 6 AM
+  workflow_dispatch:
+
+jobs:
+  e2e:
+    name: Playwright E2E
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - run: npm ci --legacy-peer-deps
+      - run: npx playwright install --with-deps chromium
+
+      - run: npm run build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ vars.NEXT_PUBLIC_SUPABASE_URL || 'http://placeholder:8000' }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ vars.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key' }}
+
+      - run: npx playwright test
+        env:
+          BASE_URL: http://localhost:3000
