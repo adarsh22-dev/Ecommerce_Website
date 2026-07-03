@@ -6,13 +6,14 @@ import { getOpenRouter, getModel, aiNotConfiguredResponse } from "@/lib/ai";
 export async function POST(req: Request) {
   const { messages } = await req.json();
 
-  const openrouter = getOpenRouter();
+  const openrouter = await getOpenRouter();
   if (!openrouter) {
     return aiNotConfiguredResponse();
   }
 
+  const model = await getModel();
   const result = await streamText({
-    model: openrouter.chat(getModel()),
+    model: openrouter.chat(model),
     system: `You are an AI business copilot for ECOM, a premium e-commerce store.
 Your job is to help the store admin understand performance, manage products, and grow sales.
 You have access to analytics, product data, and order information.

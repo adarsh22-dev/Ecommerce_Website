@@ -200,7 +200,7 @@ ECOM is positioned as a platform rather than a simple online store. The target p
 | **Cold start** | Vercel serverless (variable) | < 50ms | Implement serverless warmers; provisioned concurrency (1 week) |
 | **Disaster recovery** | Supabase PITR (7 days) | RTO < 1h, RPO < 5min | Multi-region Supabase + automated failover testing (2 weeks) |
 
-**Note on current test gap:** The unit test suite has a known `jsx: preserve` compatibility issue with Vitest 4's default oxc parser. The test runner correctly detects this and halts — no silent false positives. This is a ~2-hour config fix.
+**✅ Fixed:** The unit test suite previously had a `jsx: preserve` compatibility issue with Vitest 4's default oxc parser. This has been resolved by adding explicit `esbuild.jsx: "automatic"` configuration in `vitest.config.ts`.
 
 **Note on external dependencies:** The development server requires a `.env.local` file with Supabase credentials. Without it, all routes return 500 because the middleware (`src/middleware.ts`) creates a Supabase client on every request for session management. See [Getting Started](#getting-started) for setup instructions.
 
@@ -301,7 +301,7 @@ ECOM is positioned as a platform rather than a simple online store. The target p
 | Feature | Details |
 |---------|---------|
 | Product Listing | Grid layout with filters (category, price, search, sorting) |
-| Product Detail Page | Images, variants, options, pricing, reviews |
+| Product Detail Page | Dynamic variant-based pricing & stock, color swatches, size guide modal, tabbed sections (Description/Shipping/FAQ/Reviews), sticky mobile add-to-cart bar, Amazon-style gallery with hover zoom, recently viewed carousel |
 | Search | Debounced live search with keyboard navigation, recent searches (localStorage), product thumbnails |
 | Shopping Cart | Slide-out drawer, persistent localStorage, quantity management |
 | Checkout | Address form, Razorpay payment integration, coupon code support, order creation |
@@ -311,7 +311,7 @@ ECOM is positioned as a platform rather than a simple online store. The target p
 | Hero Slides | Dynamic carousel managed from admin |
 | Newsletter | Email subscription |
 | Responsive Design | Mobile-first, fully responsive |
-| Animations | Page transitions, hover effects, micro-interactions with Framer Motion |
+| Animations | Page transitions, staggered section entrance animations, hover effects, micro-interactions, animated hero slideshow with parallax, fly-to-cart animation, Framer Motion |
 | SEO | JSON-LD structured data (Organization, Product, BreadcrumbList, WebSite), dynamic sitemap.xml, robots.txt, OpenGraph |
 | Typography | Inter (sans-serif) + Playfair Display (serif) |
 
@@ -343,6 +343,8 @@ ECOM is positioned as a platform rather than a simple online store. The target p
 | Streaming Responses | Real-time token-by-token streaming via Vercel AI SDK `streamText` |
 | Tool Calling | AI models can directly query Supabase databases for live data |
 | OpenRouter | Multi-model support (default: GPT-4o) through OpenRouter API |
+| Runtime AI Config | Configure OpenRouter API key and model from Admin → Settings → AI tab. Environment variables take precedence |
+| Graceful Degradation | AI features return a 503 with a helpful error message when no API key is configured |
 
 ### Payments
 
@@ -368,6 +370,7 @@ ECOM is positioned as a platform rather than a simple online store. The target p
 | Accessibility | Skip navigation link, focus ring styles, ARIA attributes, loading states |
 | Image Optimization | AVIF/WebP formats via next/image, remote pattern allowlists |
 | Loading States | Global loading component with spinner animation |
+| Error Boundary | Global error boundary (`error.tsx`) with retry and developer mode error details |
 
 ### Email & Invoices
 

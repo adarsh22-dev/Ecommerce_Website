@@ -27,6 +27,8 @@ interface SiteSettings {
   social_twitter: string | null;
   social_tiktok: string | null;
   social_youtube: string | null;
+  openrouter_api_key: string | null;
+  openrouter_model: string | null;
 }
 
 const defaultSettings: SiteSettings = {
@@ -48,6 +50,8 @@ const defaultSettings: SiteSettings = {
   social_twitter: "",
   social_tiktok: "",
   social_youtube: "",
+  openrouter_api_key: null,
+  openrouter_model: null,
 };
 
 const settingsTabs = [
@@ -56,6 +60,7 @@ const settingsTabs = [
   { label: "Shipping", value: "shipping" },
   { label: "Tax", value: "tax" },
   { label: "Social", value: "social" },
+  { label: "AI", value: "ai" },
 ];
 
 export default function AdminSettingsPage() {
@@ -93,6 +98,8 @@ export default function AdminSettingsPage() {
         social_twitter: settings.social_twitter,
         social_tiktok: settings.social_tiktok,
         social_youtube: settings.social_youtube,
+        openrouter_api_key: settings.openrouter_api_key || null,
+        openrouter_model: settings.openrouter_model || null,
       }).eq("id", "1");
       if (error) throw error;
       toast.success("Settings saved!");
@@ -222,6 +229,30 @@ export default function AdminSettingsPage() {
               <Input label="Twitter / X URL" placeholder="https://twitter.com/..." value={settings.social_twitter || ""} onChange={(e) => setSettings({ ...settings, social_twitter: e.target.value })} />
               <Input label="TikTok URL" placeholder="https://tiktok.com/..." value={settings.social_tiktok || ""} onChange={(e) => setSettings({ ...settings, social_tiktok: e.target.value })} />
               <Input label="YouTube URL" placeholder="https://youtube.com/..." value={settings.social_youtube || ""} onChange={(e) => setSettings({ ...settings, social_youtube: e.target.value })} />
+              <Button onClick={handleSave} loading={saving} className="shimmer-btn">Save Changes</Button>
+            </div>
+          </TabPanel>
+
+          <TabPanel value="ai" activeTab={activeTab}>
+            <div className="space-y-4 max-w-2xl">
+              <div className="p-4 bg-muted rounded-lg mb-2">
+                <p className="text-sm font-medium mb-1">OpenRouter AI Configuration</p>
+                <p className="text-xs text-foreground-secondary">Configure AI features like the customer chat widget and admin copilot. Environment variables take precedence over values set here.</p>
+              </div>
+              <Input
+                label="OpenRouter API Key"
+                type="password"
+                placeholder="sk-or-v1-..."
+                value={settings.openrouter_api_key || ""}
+                onChange={(e) => setSettings({ ...settings, openrouter_api_key: e.target.value })}
+              />
+              <Input
+                label="AI Model"
+                placeholder="openai/gpt-4o"
+                value={settings.openrouter_model || ""}
+                onChange={(e) => setSettings({ ...settings, openrouter_model: e.target.value })}
+              />
+              <p className="text-xs text-foreground-secondary">Model options: <code className="bg-muted px-1 rounded">openai/gpt-4o</code>, <code className="bg-muted px-1 rounded">anthropic/claude-3.5-sonnet</code>, <code className="bg-muted px-1 rounded">google/gemini-pro</code>, <code className="bg-muted px-1 rounded">meta-llama/llama-3-70b</code></p>
               <Button onClick={handleSave} loading={saving} className="shimmer-btn">Save Changes</Button>
             </div>
           </TabPanel>

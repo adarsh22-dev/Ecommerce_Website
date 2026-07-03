@@ -151,6 +151,8 @@ export interface SiteSettings {
   social_twitter: string | null;
   social_tiktok: string | null;
   social_youtube: string | null;
+  openrouter_api_key: string | null;
+  openrouter_model: string | null;
   updated_at: string;
 }
 
@@ -445,7 +447,11 @@ export type HomepageSectionType =
   | "banner"
   | "instagram"
   | "newsletter"
-  | "custom_text";
+  | "custom_text"
+  | "testimonials"
+  | "blogs"
+  | "deal_today"
+  | "sale_banner_industrial";
 
 export interface HomepageSection {
   id: string;

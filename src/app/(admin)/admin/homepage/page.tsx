@@ -23,6 +23,10 @@ const sectionTypeMeta: Record<HomepageSectionType, { label: string; icon: any; d
   instagram: { label: "Instagram Feed", icon: MessageSquare, description: "Social proof gallery" },
   newsletter: { label: "Newsletter", icon: Newspaper, description: "Email signup form" },
   custom_text: { label: "Custom Text", icon: Type, description: "Rich text / HTML block" },
+  testimonials: { label: "Testimonials", icon: MessageSquare, description: "Customer reviews and testimonials" },
+  blogs: { label: "Blogs & Articles", icon: Newspaper, description: "Industry insights and blog posts" },
+  deal_today: { label: "Deal of the Day", icon: Star, description: "Daily flash sale with countdown timer" },
+  sale_banner_industrial: { label: "Industrial Sale Banner", icon: Layout, description: "Truck/industrial themed promotional banner" },
 };
 
 const sectionTypeDefaults: Record<HomepageSectionType, Record<string, any>> = {
@@ -35,6 +39,10 @@ const sectionTypeDefaults: Record<HomepageSectionType, Record<string, any>> = {
   instagram: { username: "", limit: 8 },
   newsletter: {},
   custom_text: { content_html: "" },
+  testimonials: {},
+  blogs: {},
+  deal_today: {},
+  sale_banner_industrial: {},
 };
 
 function SectionIcon({ type }: { type: HomepageSectionType }) {

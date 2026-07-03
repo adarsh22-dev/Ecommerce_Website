@@ -10,7 +10,7 @@ import type { ProductVideo } from "@/lib/types";
 const placeholderVideos = [
   {
     id: "demo-1",
-    thumbnail_url: "https://images.unsplash.com/photo-1600086827875-a63b01f1335c?w=600&h=800&fit=crop",
+    thumbnail_url: "/images/instagram/insta-3.jpg",
     video_url: "",
     title: "Style inspo",
     likes: 234,
@@ -18,7 +18,7 @@ const placeholderVideos = [
   },
   {
     id: "demo-2",
-    thumbnail_url: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&h=800&fit=crop",
+    thumbnail_url: "/images/instagram/insta-1.jpg",
     video_url: "",
     title: "New favorite",
     likes: 567,
@@ -26,7 +26,7 @@ const placeholderVideos = [
   },
   {
     id: "demo-3",
-    thumbnail_url: "https://images.unsplash.com/photo-1556306535-0f2c9300c0c0?w=600&h=800&fit=crop",
+    thumbnail_url: "/images/instagram/insta-5.jpg",
     video_url: "",
     title: "Perfect fit",
     likes: 189,
@@ -34,7 +34,7 @@ const placeholderVideos = [
   },
   {
     id: "demo-4",
-    thumbnail_url: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&h=800&fit=crop",
+    thumbnail_url: "/images/instagram/insta-4.jpg",
     video_url: "",
     title: "Daily wear",
     likes: 423,
@@ -42,7 +42,7 @@ const placeholderVideos = [
   },
   {
     id: "demo-5",
-    thumbnail_url: "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600&h=800&fit=crop",
+    thumbnail_url: "/images/instagram/insta-8.jpg",
     video_url: "",
     title: "Shop the look",
     likes: 312,
@@ -50,7 +50,7 @@ const placeholderVideos = [
   },
   {
     id: "demo-6",
-    thumbnail_url: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&h=800&fit=crop",
+    thumbnail_url: "/images/instagram/insta-7.jpg",
     video_url: "",
     title: "Must have",
     likes: 678,
@@ -79,7 +79,7 @@ export function InstagramVideos({ videos = [], productTitle }: InstagramVideosPr
   const displayVideos = videos.length > 0
     ? videos.map((v) => ({
         id: v.id ?? `video-${Math.random().toString(36).slice(2, 8)}`,
-        thumbnail_url: v.thumbnail_url || "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=600&h=800&fit=crop",
+        thumbnail_url: v.thumbnail_url || "/images/instagram/insta-1.jpg",
         video_url: v.video_url,
         title: v.title || "Product video",
         likes: Math.floor(Math.random() * 500) + 50,

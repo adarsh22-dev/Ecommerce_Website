@@ -8,14 +8,14 @@ import { MessageSquare, Heart } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const instagramPlaceholderPosts = [
-  { id: "1", image_url: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop", likes: 124, caption: "New drop alert! 🔥" },
-  { id: "2", image_url: "https://images.unsplash.com/photo-1603187187314-3c6a9b3e1b2b?w=400&h=400&fit=crop", likes: 89, caption: "Weekend vibes" },
-  { id: "3", image_url: "https://images.unsplash.com/photo-1600086827875-a63b01f1335c?w=400&h=400&fit=crop", likes: 203, caption: "Minimalist aesthetics" },
-  { id: "4", image_url: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=400&fit=crop", likes: 156, caption: "Shop the look" },
-  { id: "5", image_url: "https://images.unsplash.com/photo-1556306535-0f2c9300c0c0?w=400&h=400&fit=crop", likes: 67, caption: "Summer essentials" },
-  { id: "6", image_url: "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=400&h=400&fit=crop", likes: 178, caption: "Deals you can't miss" },
-  { id: "7", image_url: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=400&fit=crop", likes: 92, caption: "Quality you can trust" },
-  { id: "8", image_url: "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=400&h=400&fit=crop", likes: 145, caption: "Style inspo ✨" },
+  { id: "1", image_url: "/images/instagram/insta-1.jpg", likes: 124, caption: "New drop alert!" },
+  { id: "2", image_url: "/images/instagram/insta-2.jpg", likes: 89, caption: "Weekend vibes" },
+  { id: "3", image_url: "/images/instagram/insta-3.jpg", likes: 203, caption: "Minimalist aesthetics" },
+  { id: "4", image_url: "/images/instagram/insta-4.jpg", likes: 156, caption: "Shop the look" },
+  { id: "5", image_url: "/images/instagram/insta-5.jpg", likes: 67, caption: "Summer essentials" },
+  { id: "6", image_url: "/images/instagram/insta-6.jpg", likes: 178, caption: "Deals you can't miss" },
+  { id: "7", image_url: "/images/instagram/insta-7.jpg", likes: 92, caption: "Quality you can trust" },
+  { id: "8", image_url: "/images/instagram/insta-8.jpg", likes: 145, caption: "Style inspo" },
 ];
 
 interface InstagramSectionProps {

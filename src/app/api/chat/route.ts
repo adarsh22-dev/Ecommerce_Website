@@ -6,13 +6,14 @@ import { getOpenRouter, getModel, aiNotConfiguredResponse } from "@/lib/ai";
 export async function POST(req: Request) {
   const { messages } = await req.json();
 
-  const openrouter = getOpenRouter();
+  const openrouter = await getOpenRouter();
   if (!openrouter) {
     return aiNotConfiguredResponse();
   }
 
+  const model = await getModel();
   const result = await streamText({
-    model: openrouter.chat(getModel()),
+    model: openrouter.chat(model),
     system: `You are an AI shopping assistant for ECOM, a premium e-commerce store.
 Your job is to help customers find products, answer questions about the store, and provide recommendations.
 Be friendly, concise, and helpful. Use the tools available to search products and provide accurate information.

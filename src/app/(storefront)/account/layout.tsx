@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { User, Package, MapPin, Heart, Settings, LogOut, ChevronRight } from "lucide-react";
+import { User, Package, MapPin, Heart, Settings, Gift, Gem, LogOut, ChevronRight } from "lucide-react";
 import { useAuth } from "@/lib/contexts/auth-context";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,6 +15,8 @@ const sidebarLinks = [
   { label: "My Account", href: "/account", icon: User },
   { label: "Orders", href: "/account/orders", icon: Package },
   { label: "Addresses", href: "/account/addresses", icon: MapPin },
+  { label: "Gift Cards", href: "/account/gift-cards", icon: Gift },
+  { label: "Loyalty Rewards", href: "/account/loyalty", icon: Gem },
   { label: "Wishlist", href: "/account/wishlist", icon: Heart },
   { label: "Settings", href: "/account/settings", icon: Settings },
 ];

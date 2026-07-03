@@ -50,7 +50,7 @@ export function CategoriesSection({ title, subtitle, settings }: CategoriesSecti
           className="text-center mb-12"
         >
           {subtitle && <p className="text-caption text-primary mb-3">{subtitle}</p>}
-          <h2 className="font-serif text-section-heading text-foreground">{title || "Shop by Category"}</h2>
+          <h2 className="font-serif text-section-heading text-foreground">{title || "Browse Parts & Components"}</h2>
         </motion.div>
         {loading ? (
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">

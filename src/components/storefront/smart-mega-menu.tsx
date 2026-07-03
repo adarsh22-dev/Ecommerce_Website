@@ -245,7 +245,7 @@ export function SmartMegaMenu({ onNavClick }: SmartMegaMenuProps) {
   return (
     <>
       {/* Desktop Trigger */}
-      <div className="hidden lg:flex items-center gap-8">
+      <div className="hidden lg:flex items-center gap-12">
         <button
           ref={triggerRef}
           onMouseEnter={() => setOpenDropdown(true)}
@@ -338,157 +338,77 @@ export function SmartMegaMenu({ onNavClick }: SmartMegaMenuProps) {
               </div>
 
               <div className="container-xl py-8">
-                <div className="flex gap-0">
-                  {/* L1 Column */}
-                  <div className="w-56 flex-shrink-0 border-r border-border pr-5">
-                    <p className="text-xs font-semibold text-foreground-secondary uppercase tracking-wider mb-3 px-3">
-                      Categories
-                    </p>
-                    <ul className="space-y-0.5">
-                      {tree.slice(0, 8).map((l1) => (
-                        <li key={l1.category.id}>
-                          <button
-                            onMouseEnter={() => handleL1Hover(l1.category.id)}
-                            onClick={() =>
-                              handleL1Hover(
-                                activeL1 === l1.category.id ? null : l1.category.id
-                              )
-                            }
-                            className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-colors ${
-                              activeL1 === l1.category.id
-                                ? "bg-primary/5 text-primary font-medium"
-                                : "text-foreground hover:bg-muted"
-                            }`}
-                          >
-                            <span>{l1.category.name}</span>
-                            {l1.children.length > 0 && (
-                              <ChevronRight
-                                className={`w-3.5 h-3.5 transition-transform ${
-                                  activeL1 === l1.category.id ? "text-primary" : "text-foreground-secondary/40"
-                                }`}
-                              />
-                            )}
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
-                    <div className="mt-4 px-3">
+                {/* Roadmap Grid: each L1 category = one column with L2 and L3 nested */}
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
+                  {tree.slice(0, 10).map((l1) => (
+                    <div key={l1.category.id}>
+                      {/* L1 */}
                       <Link
-                        href="/products"
+                        href={`/products?category=${l1.category.slug}`}
                         onClick={closeMenu}
-                        className="text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+                        className="block text-sm font-semibold text-foreground hover:text-primary mb-3 transition-colors"
                       >
-                        View All &rarr;
+                        {l1.category.name}
                       </Link>
-                    </div>
-                  </div>
-
-                  {/* L2 Column */}
-                  {activeL1 && activeL2Children.length > 0 && (
-                    <div className="w-52 flex-shrink-0 border-r border-border px-5">
-                      <p className="text-xs font-semibold text-foreground-secondary uppercase tracking-wider mb-3">
-                        {activeL1Node?.category.name}
-                      </p>
-                      <ul className="space-y-0.5">
-                        {activeL2Children.map((l2) => (
-                          <li key={l2.category.id}>
-                            <button
-                              onMouseEnter={() => handleL2Hover(l2.category.id)}
-                              onClick={() =>
-                                handleL2Hover(
-                                  activeL2 === l2.category.id ? null : l2.category.id
-                                )
-                              }
-                              className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-colors ${
-                                activeL2 === l2.category.id
-                                  ? "bg-primary/5 text-primary font-medium"
-                                  : "text-foreground-secondary hover:bg-muted"
-                              }`}
-                            >
-                              <span>{l2.category.name}</span>
+                      {/* L2 */}
+                      {l1.children.length > 0 && (
+                        <ul className="space-y-1.5 mb-3">
+                          {l1.children.slice(0, 5).map((l2) => (
+                            <li key={l2.category.id}>
+                              <Link
+                                href={`/products?category=${l2.category.slug}`}
+                                onClick={closeMenu}
+                                className="block text-xs text-foreground-secondary hover:text-foreground transition-colors"
+                              >
+                                {l2.category.name}
+                              </Link>
+                              {/* L3 */}
                               {l2.children.length > 0 && (
-                                <ChevronRight
-                                  className={`w-3.5 h-3.5 ${
-                                    activeL2 === l2.category.id ? "text-primary" : "text-foreground-secondary/40"
-                                  }`}
-                                />
+                                <ul className="ml-3 mt-1 space-y-0.5">
+                                  {l2.children.slice(0, 4).map((l3) => (
+                                    <li key={l3.category.id}>
+                                      <Link
+                                        href={`/products?category=${l3.category.slug}`}
+                                        onClick={closeMenu}
+                                        className="block text-[11px] text-foreground-secondary/60 hover:text-foreground transition-colors"
+                                      >
+                                        {l3.category.name}
+                                      </Link>
+                                    </li>
+                                  ))}
+                                  {l2.children.length > 4 && (
+                                    <li>
+                                      <Link
+                                        href={`/products?category=${l2.category.slug}`}
+                                        onClick={closeMenu}
+                                        className="text-[11px] text-primary hover:underline"
+                                      >
+                                        +{l2.children.length - 4} more
+                                      </Link>
+                                    </li>
+                                  )}
+                                </ul>
                               )}
-                            </button>
-                          </li>
-                        ))}
-                      </ul>
-                      <div className="mt-4">
-                        <Link
-                          href={`/products?category=${activeL1Node?.category.slug}`}
-                          onClick={closeMenu}
-                          className="text-xs font-medium text-primary hover:text-primary/80 transition-colors"
-                        >
-                          All {activeL1Node?.category.name} &rarr;
-                        </Link>
-                      </div>
+                            </li>
+                          ))}
+                          {l1.children.length > 5 && (
+                            <li>
+                              <Link
+                                href={`/products?category=${l1.category.slug}`}
+                                onClick={closeMenu}
+                                className="text-xs text-primary hover:underline"
+                              >
+                                View all {l1.children.length} subcategories
+                              </Link>
+                            </li>
+                          )}
+                        </ul>
+                      )}
+                      {l1.children.length === 0 && (
+                        <p className="text-xs text-foreground-secondary/40 italic">No subcategories</p>
+                      )}
                     </div>
-                  )}
-
-                  {/* L3 Column */}
-                  {activeL1 && activeL2 && activeL3Children.length > 0 && (
-                    <div className="flex-1 px-5">
-                      <p className="text-xs font-semibold text-foreground-secondary uppercase tracking-wider mb-3">
-                        {activeL1Node?.category.name} &gt;{" "}
-                        {activeL2Children.find((n) => n.category.id === activeL2)?.category.name}
-                      </p>
-                      <ul className="space-y-0.5">
-                        {activeL3Children.map((l3) => (
-                          <li key={l3.category.id}>
-                            <Link
-                              href={`/products?category=${l3.category.slug}`}
-                              onClick={closeMenu}
-                              className="block px-3 py-2 rounded-lg text-sm text-foreground-secondary hover:text-foreground hover:bg-muted transition-colors"
-                            >
-                              {l3.category.name}
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
-                      <div className="mt-4">
-                        <Link
-                          href={`/products?category=${
-                            activeL2Children.find((n) => n.category.id === activeL2)?.category.slug || ""
-                          }`}
-                          onClick={closeMenu}
-                          className="text-xs font-medium text-primary hover:text-primary/80 transition-colors"
-                        >
-                          All{" "}
-                          {activeL2Children.find((n) => n.category.id === activeL2)?.category.name || ""}{" "}
-                          &rarr;
-                        </Link>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Fallback when no L2 children */}
-                  {activeL1 && activeL2Children.length === 0 && (
-                    <div className="flex-1 px-5 flex items-center justify-center">
-                      <div className="text-center">
-                        {activeL1Node?.category.image_url && (
-                          <img
-                            src={activeL1Node.category.image_url}
-                            alt={activeL1Node.category.name}
-                            className="w-48 h-32 object-cover rounded-lg mb-3 mx-auto"
-                          />
-                        )}
-                        <p className="text-sm text-foreground-secondary">
-                          Browse{" "}
-                          <Link
-                            href={`/products?category=${activeL1Node?.category.slug}`}
-                            onClick={closeMenu}
-                            className="text-primary font-medium hover:underline"
-                          >
-                            {activeL1Node?.category.name}
-                          </Link>
-                        </p>
-                      </div>
-                    </div>
-                  )}
+                  ))}
                 </div>
 
                 {/* Bottom links */}
@@ -522,7 +442,7 @@ export function SmartMegaMenu({ onNavClick }: SmartMegaMenuProps) {
           onClick={() => setMobileExpanded(!mobileExpanded)}
           className="flex items-center justify-between w-full px-4 py-3 text-sm font-medium text-foreground hover:bg-muted rounded-lg transition-colors"
         >
-          <span>Shop by Category</span>
+          <span>Parts & Categories</span>
           <ChevronRight
             className={`w-4 h-4 transition-transform duration-200 ${
               mobileExpanded ? "rotate-90" : ""

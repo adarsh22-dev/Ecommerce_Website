@@ -2,6 +2,8 @@ import { createClient } from "@/lib/supabase/client";
 import type { HomepageSection } from "@/lib/types";
 
 function getSupabase() {
+  const allowLive = process.env.NEXT_PUBLIC_ENABLE_SUPABASE_DATA === "true";
+  if (!allowLive) return null;
   return createClient();
 }
 
@@ -21,7 +23,7 @@ export async function getHomepageSections() {
 
 export async function adminGetHomepageSections() {
   const supabase = getSupabase();
-  if (!supabase) return [];
+  if (!supabase) throw new Error("Supabase not configured");
 
   const { data, error } = await supabase
     .from("homepage_sections")

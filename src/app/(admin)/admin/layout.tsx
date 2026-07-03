@@ -23,6 +23,7 @@ import {
   Store,
   Building2,
   Shield,
+  History,
   LogOut,
 } from "lucide-react";
 import dynamic from "next/dynamic";
@@ -51,6 +52,7 @@ const sidebarLinks: SidebarItem[] = [
   { label: "SEO", href: "/admin/seo", icon: Globe },
   { label: "Vendors", href: "/admin/vendors", icon: Store },
   { label: "Wholesalers", href: "/admin/wholesalers", icon: Building2 },
+  { label: "Activity", href: "/admin/activity", icon: History },
   { label: "Super Admin", href: "/admin/super-admin", icon: Shield },
 ];
 

@@ -7,12 +7,12 @@ import { Button } from "@/components/ui/button";
 import { Modal } from "@/components/ui/modal";
 
 const placeholderMedia = [
-  { id: "1", url: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400", filename: "watch-hero.jpg", size: 245000, mime_type: "image/jpeg" },
-  { id: "2", url: "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400", filename: "sneakers-1.jpg", size: 189000, mime_type: "image/jpeg" },
-  { id: "3", url: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400", filename: "cotton-tee.jpg", size: 156000, mime_type: "image/jpeg" },
-  { id: "4", url: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400", filename: "headphones.jpg", size: 210000, mime_type: "image/jpeg" },
-  { id: "5", url: "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=400", filename: "skincare-set.jpg", size: 178000, mime_type: "image/jpeg" },
-  { id: "6", url: "https://images.unsplash.com/photo-1544816155-12df9643f363?w=400", filename: "tote-bag.jpg", size: 134000, mime_type: "image/jpeg" },
+  { id: "1", url: "/images/products/product-1.jpg", filename: "cylinder-head.jpg", size: 68000, mime_type: "image/jpeg" },
+  { id: "2", url: "/images/products/product-2.jpg", filename: "brake-rotor-set.jpg", size: 60000, mime_type: "image/jpeg" },
+  { id: "3", url: "/images/products/product-3.jpg", filename: "led-headlight-kit.jpg", size: 80000, mime_type: "image/jpeg" },
+  { id: "4", url: "/images/hero/hero-2.jpg", filename: "workshop-hero.jpg", size: 622000, mime_type: "image/jpeg" },
+  { id: "5", url: "/images/banners/industrial-banner.jpg", filename: "industrial-banner.jpg", size: 178000, mime_type: "image/jpeg" },
+  { id: "6", url: "/images/hero/hero-1.jpg", filename: "warehouse-hero.jpg", size: 193000, mime_type: "image/jpeg" },
 ];
 
 function formatFileSize(bytes: number): string {

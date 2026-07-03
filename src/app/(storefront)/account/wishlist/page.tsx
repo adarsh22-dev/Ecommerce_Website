@@ -8,18 +8,18 @@ import Link from "next/link";
 
 const placeholderWishlist = [
   {
-    id: "1", title: "Classic Leather Watch", slug: "classic-leather-watch", price: 299, sale_price: null,
-    category: { name: "Accessories" },
-    product_images: [{ image_url: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&h=800&fit=crop" }],
-    created_at: new Date().toISOString(), status: "active" as const, sku: "CLW-001", stock_quantity: 25,
+    id: "1", title: "Turbocharger Assembly Kit", slug: "turbocharger-assembly-kit", price: 45000, sale_price: 39999,
+    category: { name: "Engine & Drivetrain" },
+    product_images: [{ image_url: "/images/products/product-3.jpg" }],
+    created_at: new Date().toISOString(), status: "active" as const, sku: "ENG-TC-002", stock_quantity: 10,
     track_inventory: true, allow_backorders: false, tags: [], description: null, sale_start: null, sale_end: null,
     meta_title: null, meta_description: null, og_image_url: null,
   },
   {
-    id: "4", title: "Wireless Headphones", slug: "wireless-headphones", price: 349, sale_price: null,
-    category: { name: "Electronics" },
-    product_images: [{ image_url: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&h=800&fit=crop" }],
-    created_at: new Date().toISOString(), status: "active" as const, sku: "WH-004", stock_quantity: 30,
+    id: "4", title: "Diesel Engine Cylinder Head Assembly", slug: "diesel-engine-cylinder-head-assembly", price: 28500, sale_price: 24999,
+    category: { name: "Engine & Drivetrain" },
+    product_images: [{ image_url: "/images/products/product-1.jpg" }],
+    created_at: new Date().toISOString(), status: "active" as const, sku: "ENG-CH-001", stock_quantity: 15,
     track_inventory: true, allow_backorders: false, tags: [], description: null, sale_start: null, sale_end: null,
     meta_title: null, meta_description: null, og_image_url: null,
   },

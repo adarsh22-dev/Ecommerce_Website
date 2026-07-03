@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import { HeroSection } from "@/components/storefront/sections/hero-section";
 import { TrustBadgesSection } from "@/components/storefront/sections/trust-badges-section";
 import { CategoriesSection } from "@/components/storefront/sections/categories-section";
@@ -9,6 +10,10 @@ import { BannerSection } from "@/components/storefront/sections/banner-section";
 import { InstagramSection } from "@/components/storefront/sections/instagram-section";
 import { NewsletterSection } from "@/components/storefront/sections/newsletter-section";
 import { CustomTextSection } from "@/components/storefront/sections/custom-text-section";
+import { TestimonialsSection } from "@/components/storefront/sections/testimonials-section";
+import { BlogsSection } from "@/components/storefront/sections/blogs-section";
+import { DealTodaySection } from "@/components/storefront/sections/deal-today-section";
+import { SaleBannerIndustrial } from "@/components/storefront/sections/sale-banner-industrial";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { HomepageSection } from "@/lib/types";
 
@@ -22,6 +27,10 @@ const sectionComponents: Record<string, React.FC<any>> = {
   instagram: InstagramSection,
   newsletter: NewsletterSection,
   custom_text: CustomTextSection,
+  testimonials: TestimonialsSection,
+  blogs: BlogsSection,
+  deal_today: DealTodaySection,
+  sale_banner_industrial: SaleBannerIndustrial,
 };
 
 const fallbackSections: HomepageSection[] = [
@@ -30,9 +39,9 @@ const fallbackSections: HomepageSection[] = [
     type: "hero",
     settings: {
       slides: [
-        { image_url: "https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=1920&h=900&fit=crop", heading: "Curated Collections", subheading: "Discover pieces that define your style", cta_text: "Shop Now", cta_link: "/products" },
-        { image_url: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=1920&h=900&fit=crop", heading: "New Season Edit", subheading: "Fresh arrivals for the modern lifestyle", cta_text: "Explore", cta_link: "/products?sort=newest" },
-        { image_url: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=1920&h=900&fit=crop", heading: "Premium Quality", subheading: "Crafted with care, built to last", cta_text: "View Collection", cta_link: "/products" },
+        { image_url: "/images/hero/hero-1.jpg", heading: "Industrial-Grade Parts", subheading: "Heavy-duty components built for performance", cta_text: "Shop Now", cta_link: "/products" },
+        { image_url: "/images/hero/hero-2.jpg", heading: "Certified Quality", subheading: "OEM & aftermarket solutions for every vehicle", cta_text: "Explore", cta_link: "/products?sort=newest" },
+        { image_url: "/images/hero/hero-3.jpg", heading: "Bulk Pricing", subheading: "Wholesale rates for workshops and fleets", cta_text: "View Collection", cta_link: "/products" },
       ],
     },
     sort_order: 0,
@@ -52,7 +61,7 @@ const fallbackSections: HomepageSection[] = [
   {
     id: "fallback-categories",
     type: "categories",
-    title: "Shop by Category",
+    title: "Shop by Category — Engine, Brakes, Electrical & More",
     subtitle: "Browse",
     settings: {},
     sort_order: 2,
@@ -94,17 +103,88 @@ const fallbackSections: HomepageSection[] = [
     updated_at: "",
   },
   {
-    id: "fallback-newsletter",
-    type: "newsletter",
-    title: "Join Our Newsletter",
-    subtitle: "Stay Updated",
+    id: "fallback-testimonials",
+    type: "testimonials",
+    title: "Testimonials",
+    subtitle: "Trusted by operators",
     settings: {},
     sort_order: 6,
     is_active: true,
     created_at: "",
     updated_at: "",
   },
+  {
+    id: "fallback-deal-today",
+    type: "deal_today",
+    title: "Deal of the Day",
+    subtitle: "Limited Time",
+    settings: {},
+    sort_order: 7,
+    is_active: true,
+    created_at: "",
+    updated_at: "",
+  },
+  {
+    id: "fallback-industrial-sale",
+    type: "sale_banner_industrial",
+    title: "Industrial Parts Sale",
+    subtitle: "Commercial",
+    settings: {},
+    sort_order: 8,
+    is_active: true,
+    created_at: "",
+    updated_at: "",
+  },
+  {
+    id: "fallback-blogs",
+    type: "blogs",
+    title: "Blogs & Articles",
+    subtitle: "Industry Insights",
+    settings: {},
+    sort_order: 9,
+    is_active: true,
+    created_at: "",
+    updated_at: "",
+  },
+  {
+    id: "fallback-newsletter",
+    type: "newsletter",
+    title: "Join Our Newsletter",
+    subtitle: "Stay Updated",
+    settings: {},
+    sort_order: 10,
+    is_active: true,
+    created_at: "",
+    updated_at: "",
+  },
 ];
+
+function SectionWrapper({
+  section,
+  index,
+  children,
+}: {
+  section: HomepageSection;
+  index: number;
+  children: React.ReactNode;
+}) {
+  if (section.type === "hero") return <>{children}</>;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-80px" }}
+      transition={{
+        duration: 0.6,
+        delay: index * 0.05,
+        ease: [0.25, 0.1, 0.25, 1],
+      }}
+    >
+      {children}
+    </motion.div>
+  );
+}
 
 export function HomePage() {
   const [sections, setSections] = useState<HomepageSection[]>(fallbackSections);
@@ -139,28 +219,37 @@ export function HomePage() {
             </div>
           </div>
         </div>
+        <div className="container-xl py-12">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <Skeleton key={i} className="h-24 rounded-xl" />
+            ))}
+          </div>
+        </div>
       </div>
     );
   }
 
+  const activeSections = sections
+    .filter((s) => s.is_active)
+    .sort((a, b) => a.sort_order - b.sort_order);
+
   return (
     <div>
-      {sections
-        .filter((s) => s.is_active)
-        .sort((a, b) => a.sort_order - b.sort_order)
-        .map((section) => {
-          const Component = sectionComponents[section.type];
-          if (!Component) return null;
+      {activeSections.map((section, index) => {
+        const Component = sectionComponents[section.type];
+        if (!Component) return null;
 
-          return (
+        return (
+          <SectionWrapper key={section.id} section={section} index={index}>
             <Component
-              key={section.id}
               title={section.title || undefined}
               subtitle={section.subtitle || undefined}
               settings={section.settings}
             />
-          );
-        })}
+          </SectionWrapper>
+        );
+      })}
     </div>
   );
 }
