@@ -515,17 +515,20 @@ export default function CheckoutPage() {
                 <label className="text-xs font-semibold text-foreground-secondary uppercase tracking-wider mb-2 block">
                   Promo Code
                 </label>
-                <div className="flex flex-col sm:flex-row gap-2">
+                <div className="flex gap-2" style={{ flexDirection: "column" }}>
                   <input
                     type="text"
                     value={couponCode}
                     onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
                     placeholder="Enter code"
-                    className="w-full h-10 px-3 border border-border rounded-lg text-sm bg-white focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+                    className="flex-1 h-10 px-3 border border-border rounded-lg text-sm bg-white focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
                   />
-                  <Button variant="secondary" size="sm" onClick={handleApplyCoupon} className="w-full sm:w-auto sm:shrink-0">
+                  <button
+                    onClick={handleApplyCoupon}
+                    className="relative inline-flex items-center justify-center font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-border bg-white text-foreground hover:bg-muted h-8 px-3 text-xs rounded-md gap-1.5 shrink-0"
+                  >
                     Apply
-                  </Button>
+                  </button>
                 </div>
                 {couponMessage && (
                   <p className={`text-xs mt-2 ${couponDiscount > 0 ? "text-success" : "text-destructive"}`}>
