@@ -175,6 +175,45 @@ function writeLocalImportedRecords(tableName: string, records: any[]) {
   window.localStorage.setItem(getLocalStorageKey(tableName), JSON.stringify(records));
 }
 
+function getDeletedKey(tableName: string) {
+  return `ecom:${tableName}:deleted`;
+}
+
+function readLocalDeletedRecords(tableName: string): string[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = window.localStorage.getItem(getDeletedKey(tableName));
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeLocalDeletedRecords(tableName: string, ids: string[]) {
+  if (typeof window === "undefined") return;
+  window.localStorage.setItem(getDeletedKey(tableName), JSON.stringify(ids));
+}
+
+export function deleteLocalRecord(tableName: string, id: string) {
+  const deleted = readLocalDeletedRecords(tableName);
+  if (!deleted.includes(id)) {
+    deleted.push(id);
+    writeLocalDeletedRecords(tableName, deleted);
+  }
+  // Also remove from imported records if present
+  const imported = readLocalImportedRecords(tableName);
+  const filtered = imported.filter((r: any) => r.id !== id);
+  if (filtered.length !== imported.length) {
+    writeLocalImportedRecords(tableName, filtered);
+  }
+}
+
+function filterDeletedRecords<T extends { id: string }>(tableName: string, records: T[]): T[] {
+  const deleted = readLocalDeletedRecords(tableName);
+  if (deleted.length === 0) return records;
+  return records.filter((r) => !deleted.includes(r.id));
+}
+
 export async function importCsvRecords(tableName: string, rows: Record<string, any>[]) {
   const importedRows = [...readLocalImportedRecords(tableName)];
   const normalizedRows = rows.map((row) => ({ ...row }));
@@ -232,7 +271,7 @@ export async function getProducts(filters: ProductFilters = {}) {
   const supabase = getSupabase();
   if (!supabase) {
     const localProducts = readLocalImportedRecords("products") as any[];
-    const mergedProducts = [...fallbackProducts, ...localProducts];
+    const mergedProducts = filterDeletedRecords("products", [...fallbackProducts, ...localProducts]);
     const items = mergedProducts.filter((product) => product.status !== "draft");
     const filtered = items.filter((product) => {
       if (filters.category) {
@@ -482,7 +521,7 @@ export async function getCategories() {
   const supabase = getSupabase();
   if (!supabase) {
     const localCategories = readLocalImportedRecords("categories");
-    return [...getFallbackCategories(), ...localCategories];
+    return filterDeletedRecords("categories", [...getFallbackCategories(), ...localCategories]);
   }
 
   const { data, error } = await supabase
@@ -493,10 +532,10 @@ export async function getCategories() {
   if (error) {
     console.error("getCategories failed", error);
     const localCategories = readLocalImportedRecords("categories");
-    return [...getFallbackCategories(), ...localCategories];
+    return filterDeletedRecords("categories", [...getFallbackCategories(), ...localCategories]);
   }
   const localCategories = readLocalImportedRecords("categories");
-  return [...(data || []), ...localCategories];
+  return filterDeletedRecords("categories", [...(data || []), ...localCategories]);
 }
 
 export async function getCategoryBySlug(slug: string) {

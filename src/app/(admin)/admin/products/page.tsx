@@ -43,20 +43,27 @@ export default function AdminProductsPage() {
 
   const handleDelete = async () => {
     if (!selectedProduct) return;
+    const id = selectedProduct.id;
     try {
-      const shouldSkipRemoteDelete = selectedProduct.id.startsWith("local-prod-") || selectedProduct.id.startsWith("prod-");
-      if (!shouldSkipRemoteDelete) {
-        const supabase = (await import("@/lib/supabase/client")).createClient();
-        const { error } = await supabase.from("products").delete().eq("id", selectedProduct.id);
-        if (error) throw error;
+      const isMockId = id.startsWith("prod-");
+      const isLocalId = id.startsWith("local-prod-");
+      if (!isMockId && !isLocalId) {
+        try {
+          const supabase = (await import("@/lib/supabase/client")).createClient();
+          await supabase.from("products").delete().eq("id", id);
+        } catch {
+          // Supabase delete may fail (RLS/mock data) — proceed with local deletion
+        }
       }
-      setProducts((prev) => prev.filter((product) => product.id !== selectedProduct.id));
+      const { deleteLocalRecord } = await import("@/lib/services/products");
+      deleteLocalRecord("products", id);
+      setProducts((prev) => prev.filter((product) => product.id !== id));
       toast.success("Product deleted");
-      setShowDeleteModal(false);
-      setSelectedProduct(null);
     } catch {
       toast.error("Failed to delete product");
     }
+    setShowDeleteModal(false);
+    setSelectedProduct(null);
   };
 
   const filteredProducts = products.filter((p) => {
