@@ -64,6 +64,21 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const pathname = usePathname();
   const router = useRouter();
   const { profile, signOut } = useAuth();
+  const [authReady, setAuthReady] = useState(false);
+
+  useEffect(() => {
+    if (profile === undefined) return;
+    setAuthReady(true);
+    if (!profile) {
+      router.replace("/auth?redirect=/admin");
+    } else if (profile.role !== "admin" && profile.role !== "super_admin") {
+      router.replace("/");
+    }
+  }, [profile, router]);
+
+  if (!authReady || !profile || (profile.role !== "admin" && profile.role !== "super_admin")) {
+    return null;
+  }
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -89,6 +104,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         }`}
       >
         <div className={`flex items-center h-16 px-4 border-b border-border ${collapsed ? "justify-center" : "justify-between"}`}>
+          <Link href="/admin" className="flex items-center gap-2.5 min-w-0">
+            <div className="w-7 h-7 rounded-lg bg-primary flex items-center justify-center flex-shrink-0">
+              <span className="text-xs font-black text-white">A</span>
+            </div>
+            {!collapsed && (
+              <div className="min-w-0">
+                <p className="text-sm font-bold text-foreground leading-tight truncate">Admin</p>
+                <p className="text-[10px] text-foreground-secondary/60 leading-tight truncate">Control Panel</p>
+              </div>
+            )}
+          </Link>
           <button
             onClick={() => setCollapsed(!collapsed)}
             className="p-2 hover:bg-muted rounded-lg transition-colors flex-shrink-0"
@@ -221,6 +247,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             >
               <Menu className="w-5 h-5" />
             </button>
+            <Link href="/admin" className="hidden sm:flex items-center gap-2">
+              <div className="w-6 h-6 rounded-md bg-primary/10 flex items-center justify-center">
+                <span className="text-[10px] font-black text-primary">A</span>
+              </div>
+              <span className="text-sm font-semibold text-foreground">Admin</span>
+            </Link>
+            <div className="hidden sm:block w-px h-5 bg-border" />
             <div className="flex items-center gap-2 bg-muted/70 rounded-lg px-3 py-2 w-48 sm:w-64 focus-within:bg-muted focus-within:ring-2 focus-within:ring-primary/20 transition-all">
               <Search className="w-4 h-4 text-foreground-secondary flex-shrink-0" />
               <input
