@@ -42,12 +42,27 @@ export default function CheckoutPage() {
   const [couponMessage, setCouponMessage] = useState("");
   const [processing, setProcessing] = useState(false);
   const [crossSellProducts, setCrossSellProducts] = useState<ProductWithDetails[]>([]);
+  const [gstNumber, setGstNumber] = useState("");
+  const [taxRate, setTaxRate] = useState(8);
+  const [taxInclusive, setTaxInclusive] = useState(false);
   const { items, subtotal, clearCart } = useCart();
   const { user, profile } = useAuth();
   const router = useRouter();
   const shippingCost = shippingMethod === "express" ? 15 : subtotal > 100 ? 0 : 10;
-  const tax = subtotal * 0.08;
+  const tax = taxInclusive ? 0 : subtotal * (taxRate / 100);
+  const halfTax = tax / 2;
   const total = subtotal + shippingCost + tax - couponDiscount;
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const { getSiteSettings } = await import("@/lib/services/products");
+        const settings = await getSiteSettings();
+        setTaxRate(settings.tax_rate || 8);
+        setTaxInclusive(settings.tax_inclusive || false);
+      } catch { /* silent */ }
+    })();
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -129,6 +144,7 @@ export default function CheckoutPage() {
           tax_amount: tax,
           total,
           coupon_code: couponCode || null,
+          gst_number: gstNumber || null,
           payment_status: "pending",
           fulfillment_status: "pending",
         })
@@ -346,6 +362,25 @@ export default function CheckoutPage() {
                     <Input label="Country" value={shipping.country} onChange={(e) => setShipping({ ...shipping, country: e.target.value })} />
                   </div>
 
+                  {/* GST Number */}
+                  <div className="mt-6 pt-6 border-t border-border">
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="h-6 w-6 rounded bg-primary/10 flex items-center justify-center">
+                        <span className="text-[10px] font-bold text-primary">GST</span>
+                      </div>
+                      <span className="text-sm font-medium text-foreground">GST Number (for business invoices)</span>
+                    </div>
+                    <Input
+                      label="GST Number (optional)"
+                      placeholder="22AAAAA0000A1Z5"
+                      value={gstNumber}
+                      onChange={(e) => setGstNumber(e.target.value.toUpperCase())}
+                    />
+                    <p className="text-xs text-foreground-secondary mt-1.5">
+                      Provide your GST number for a tax invoice. Leave blank for consumer purchases.
+                    </p>
+                  </div>
+
                   <h3 className="text-sm font-medium mt-8 mb-4">Shipping Method</h3>
                   <div className="space-y-3">
                     {[
@@ -473,22 +508,22 @@ export default function CheckoutPage() {
           </div>
 
           {/* Order Summary Sidebar */}
-          <div className="lg:col-span-1">
-            <div className="card p-6 sticky top-24 space-y-6">
+          <div className="lg:col-span-1 min-w-0">
+            <div className="card p-4 sm:p-6 sticky top-24 space-y-4 overflow-hidden">
               {/* Coupon */}
-              <div className="bg-muted/40 rounded-xl p-4 border border-border/60">
+              <div className="bg-muted/40 rounded-xl p-3 sm:p-4 border border-border/60">
                 <label className="text-xs font-semibold text-foreground-secondary uppercase tracking-wider mb-2 block">
                   Promo Code
                 </label>
-                <div className="flex gap-2">
+                <div className="flex flex-col sm:flex-row gap-2">
                   <input
                     type="text"
                     value={couponCode}
                     onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
                     placeholder="Enter code"
-                    className="flex-1 h-10 px-3 border border-border rounded-lg text-sm bg-white focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+                    className="w-full h-10 px-3 border border-border rounded-lg text-sm bg-white focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
                   />
-                  <Button variant="secondary" size="sm" onClick={handleApplyCoupon} className="shrink-0">
+                  <Button variant="secondary" size="sm" onClick={handleApplyCoupon} className="w-full sm:w-auto sm:shrink-0">
                     Apply
                   </Button>
                 </div>
@@ -518,9 +553,21 @@ export default function CheckoutPage() {
                   <span className="font-medium">{shippingCost === 0 ? "Free" : formatCurrency(shippingCost)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-foreground-secondary">Tax</span>
+                  <span className="text-foreground-secondary">Tax ({taxRate}%)</span>
                   <span className="font-medium">{formatCurrency(tax)}</span>
                 </div>
+                {tax > 0 && (
+                  <div className="flex justify-between text-xs text-foreground-secondary pl-4">
+                    <span>CGST ({taxRate / 2}%)</span>
+                    <span>{formatCurrency(halfTax)}</span>
+                  </div>
+                )}
+                {tax > 0 && (
+                  <div className="flex justify-between text-xs text-foreground-secondary pl-4">
+                    <span>SGST ({taxRate / 2}%)</span>
+                    <span>{formatCurrency(halfTax)}</span>
+                  </div>
+                )}
                 <hr className="border-border" />
                 <div className="flex justify-between text-base font-semibold">
                   <span>Total</span>
