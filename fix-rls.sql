@@ -31,6 +31,9 @@ END $$;
 CREATE POLICY "Admins can view all profiles" ON profiles FOR SELECT USING (is_admin());
 CREATE POLICY "Admins can update all profiles" ON profiles FOR UPDATE USING (is_admin());
 
+-- 3a. Allow users to manage their own profile (needed for signup & Setup)
+CREATE POLICY "Users can insert own profile" ON profiles FOR INSERT WITH CHECK (auth.uid() = id);
+
 CREATE POLICY "Admins can view all products" ON products FOR SELECT USING (is_admin());
 CREATE POLICY "Admins can insert products" ON products FOR INSERT WITH CHECK (is_admin());
 CREATE POLICY "Admins can update products" ON products FOR UPDATE USING (is_admin());

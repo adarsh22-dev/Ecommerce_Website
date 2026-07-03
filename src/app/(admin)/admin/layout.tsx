@@ -63,20 +63,20 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const profileRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const router = useRouter();
-  const { profile, signOut } = useAuth();
+  const { profile, signOut, loading } = useAuth();
   const [authReady, setAuthReady] = useState(false);
 
   useEffect(() => {
-    if (profile === undefined) return;
+    if (loading) return;
     setAuthReady(true);
     if (!profile) {
       router.replace("/auth?redirect=/admin");
     } else if (profile.role !== "admin" && profile.role !== "super_admin") {
       router.replace("/");
     }
-  }, [profile, router]);
+  }, [profile, loading, router]);
 
-  if (!authReady || !profile || (profile.role !== "admin" && profile.role !== "super_admin")) {
+  if (!authReady || loading || !profile || (profile.role !== "admin" && profile.role !== "super_admin")) {
     return null;
   }
 

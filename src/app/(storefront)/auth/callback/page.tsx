@@ -21,7 +21,7 @@ export default function AuthCallbackPage() {
           // Try to create/ensure profile exists for OAuth users
           const { data: profile, error: profileError } = await supabase
             .from("profiles")
-            .select("role, status")
+            .select("role")
             .eq("id", session.user.id)
             .single();
 
@@ -32,14 +32,13 @@ export default function AuthCallbackPage() {
               email: session.user.email || "",
               full_name: session.user.user_metadata?.full_name || session.user.email?.split("@")[0] || "User",
               role: "customer",
-              status: "approved",
             });
           }
 
           // Get the updated profile to check role
           const { data: updatedProfile } = await supabase
             .from("profiles")
-            .select("role, status")
+            .select("role")
             .eq("id", session.user.id)
             .single();
 
