@@ -5,45 +5,56 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.text();
     const signature = request.headers.get("razorpay-signature");
+    const secret = process.env.RAZORPAY_WEBHOOK_SECRET;
 
-    // In production, verify the webhook signature
-    // const crypto = require("crypto");
-    // const expectedSignature = crypto.createHmac("sha256", process.env.RAZORPAY_WEBHOOK_SECRET!)
-    //   .update(body).digest("hex");
-    // if (signature !== expectedSignature) {
-    //   return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
-    // }
+    if (secret) {
+      const expectedSignature = crypto
+        .createHmac("sha256", secret)
+        .update(body)
+        .digest("hex");
+      if (signature !== expectedSignature) {
+        return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
+      }
+    }
 
     const event = JSON.parse(body);
 
     switch (event.type) {
-      case "payment_intent.succeeded": {
-        const paymentIntent = event.data.object;
-        const supabase = await createClient();
+      case "payment_intent.succeeded":
+      case "order.paid": {
+        const payload = event.payload || event.data?.object || {};
+        const razorpayOrderId = payload.order?.entity?.id || payload.id;
+        const razorpayPaymentId = payload.payment?.entity?.id || payload.id;
 
-        // Update order payment status
+        if (!razorpayOrderId) break;
+
+        const supabase = await createClient();
         await supabase
           .from("orders")
           .update({
             payment_status: "paid",
-            razorpay_payment_id: paymentIntent.id,
+            razorpay_payment_id: razorpayPaymentId,
             updated_at: new Date().toISOString(),
           })
-          .eq("razorpay_payment_id", paymentIntent.id);
+          .eq("razorpay_order_id", razorpayOrderId);
 
         break;
       }
-      case "payment_intent.payment_failed": {
-        const paymentIntent = event.data.object;
-        const supabase = await createClient();
+      case "payment_intent.payment_failed":
+      case "order.failed": {
+        const failPayload = event.payload || event.data?.object || {};
+        const failOrderId = failPayload.order?.entity?.id || failPayload.id;
 
+        if (!failOrderId) break;
+
+        const supabase = await createClient();
         await supabase
           .from("orders")
           .update({
             payment_status: "failed",
             updated_at: new Date().toISOString(),
           })
-          .eq("razorpay_payment_id", paymentIntent.id);
+          .eq("razorpay_order_id", failOrderId);
 
         break;
       }
@@ -55,3 +66,5 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Webhook handler failed" }, { status: 500 });
   }
 }
+
+import crypto from "crypto";

@@ -300,6 +300,7 @@ export interface Order {
     | "shipped"
     | "delivered"
     | "cancelled";
+  razorpay_order_id: string | null;
   razorpay_payment_id: string | null;
   tracking_number: string | null;
   tracking_carrier: string | null;

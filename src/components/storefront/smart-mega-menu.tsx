@@ -338,52 +338,55 @@ export function SmartMegaMenu({ onNavClick }: SmartMegaMenuProps) {
               </div>
 
               <div className="container-xl py-8">
-                {/* Roadmap Grid: each L1 category = one column with L2 and L3 nested */}
+                {/* Roadmap Grid: each L1 = column, L2 = bold sub-heading, L3 = links */}
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
                   {tree.slice(0, 10).map((l1) => (
-                    <div key={l1.category.id}>
-                      {/* L1 */}
-                      <Link
-                        href={`/products?category=${l1.category.slug}`}
-                        onClick={closeMenu}
-                        className="block text-sm font-semibold text-foreground hover:text-primary mb-3 transition-colors"
-                      >
-                        {l1.category.name}
-                      </Link>
-                      {/* L2 */}
+                    <div key={l1.category.id} className="min-w-0">
+                      {/* L1 — Domain category (column header) */}
+                      <div className="mb-4 pb-3 border-b border-border/50">
+                        <Link
+                          href={`/products?category=${l1.category.slug}`}
+                          onClick={closeMenu}
+                          className="block text-sm font-bold text-foreground hover:text-primary transition-colors"
+                        >
+                          {l1.category.name}
+                        </Link>
+                      </div>
+                      {/* L2 + L3 — Sub-categories and their children */}
                       {l1.children.length > 0 && (
-                        <ul className="space-y-1.5 mb-3">
+                        <ul className="space-y-4">
                           {l1.children.slice(0, 5).map((l2) => (
                             <li key={l2.category.id}>
+                              {/* L2 — Sub-heading (bold, uppercase) */}
                               <Link
                                 href={`/products?category=${l2.category.slug}`}
                                 onClick={closeMenu}
-                                className="block text-xs text-foreground-secondary hover:text-foreground transition-colors"
+                                className="block text-[11px] font-semibold text-foreground-secondary/80 uppercase tracking-wider hover:text-foreground transition-colors mb-1.5"
                               >
                                 {l2.category.name}
                               </Link>
-                              {/* L3 */}
+                              {/* L3 — Deep links */}
                               {l2.children.length > 0 && (
-                                <ul className="ml-3 mt-1 space-y-0.5">
-                                  {l2.children.slice(0, 4).map((l3) => (
+                                <ul className="space-y-1">
+                                  {l2.children.slice(0, 5).map((l3) => (
                                     <li key={l3.category.id}>
                                       <Link
                                         href={`/products?category=${l3.category.slug}`}
                                         onClick={closeMenu}
-                                        className="block text-[11px] text-foreground-secondary/60 hover:text-foreground transition-colors"
+                                        className="block text-xs text-foreground-secondary/60 hover:text-foreground transition-colors pl-2 border-l border-border/30 hover:border-primary/50"
                                       >
                                         {l3.category.name}
                                       </Link>
                                     </li>
                                   ))}
-                                  {l2.children.length > 4 && (
+                                  {l2.children.length > 5 && (
                                     <li>
                                       <Link
                                         href={`/products?category=${l2.category.slug}`}
                                         onClick={closeMenu}
-                                        className="text-[11px] text-primary hover:underline"
+                                        className="text-xs text-primary/70 hover:text-primary transition-colors pl-2"
                                       >
-                                        +{l2.children.length - 4} more
+                                        +{l2.children.length - 5} more
                                       </Link>
                                     </li>
                                   )}
@@ -396,9 +399,9 @@ export function SmartMegaMenu({ onNavClick }: SmartMegaMenuProps) {
                               <Link
                                 href={`/products?category=${l1.category.slug}`}
                                 onClick={closeMenu}
-                                className="text-xs text-primary hover:underline"
+                                className="text-xs font-medium text-primary hover:text-primary/80 transition-colors"
                               >
-                                View all {l1.children.length} subcategories
+                                View all {l1.children.length} subcategories &rarr;
                               </Link>
                             </li>
                           )}

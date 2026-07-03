@@ -2,8 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap");
-
 @layer base {
   * {
     border-color: theme("colors.border");
@@ -328,28 +326,4 @@
   }
 }
 
-/* =====================================================
-   Custom Responsive Overrides
-   ===================================================== */
 
-/* Override lg:px-6 to apply padding on all sides at lg breakpoint */
-@media (min-width: 1024px) {
-  .lg\:px-6 {
-    padding-top: 1.5rem;
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
-    padding-bottom: 1.5rem;
-  }
-}
-
-/* Override sm:w-64 to a narrower width at sm breakpoint */
-@media (min-width: 640px) {
-  .sm\:w-64 {
-    width: 200px !important;
-  }
-}
-
-/* Override py-16 to 16px padding on all sides */
-.py-16 {
-  padding: 16px;
-}

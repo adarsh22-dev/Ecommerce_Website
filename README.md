@@ -304,16 +304,37 @@ ECOM is positioned as a platform rather than a simple online store. The target p
 | Product Detail Page | Dynamic variant-based pricing & stock, color swatches, size guide modal, tabbed sections (Description/Shipping/FAQ/Reviews), sticky mobile add-to-cart bar, Amazon-style gallery with hover zoom, recently viewed carousel |
 | Search | Debounced live search with keyboard navigation, recent searches (localStorage), product thumbnails |
 | Shopping Cart | Slide-out drawer, persistent localStorage, quantity management |
-| Checkout | Address form, Razorpay payment integration, coupon code support, order creation |
-| Order Confirmation | Animated success page with order summary |
+| Checkout | Address form, Razorpay payment integration (live + demo mode), coupon code support, order creation |
+| Order Confirmation | Dynamic success page with live order data via `?id=` query param |
 | User Accounts | Auth (email/password + Google OAuth via Supabase), profile management, order history, wishlist, address book |
+| Gift Cards | Balance display, copy-to-clipboard, active/used/expired status |
+| Loyalty Rewards | Bronze/Silver/Gold/Platinum tier progression, perks per tier, points history |
 | Product Reviews | Star rating, review submission, pagination, star breakdown chart |
-| Hero Slides | Dynamic carousel managed from admin |
+| Hero Slides | Promotional Spring Sale style carousel with sale badge, price tags, gradient CTA, timer, autoplay progress bar |
+| Mega Menu | Roadmap grid layout -- L1 column headers, L2 bold uppercase sub-headings, L3 border-indented deep links |
 | Newsletter | Email subscription |
 | Responsive Design | Mobile-first, fully responsive |
-| Animations | Page transitions, staggered section entrance animations, hover effects, micro-interactions, animated hero slideshow with parallax, fly-to-cart animation, Framer Motion |
+| Animations | Page transitions, staggered section entrance animations, hover effects, micro-interactions, animated hero slideshow, fly-to-cart animation, Framer Motion |
 | SEO | JSON-LD structured data (Organization, Product, BreadcrumbList, WebSite), dynamic sitemap.xml, robots.txt, OpenGraph |
-| Typography | Inter (sans-serif) + Playfair Display (serif) |
+| Typography | Inter (sans-serif) + Playfair Display (serif) loaded via next/font (no render-blocking) |
+
+### Vendor Portal (`/vendor`)
+
+| Feature | Details |
+|---------|---------|
+| Dashboard | Revenue, orders, products, AOV stats with alerts and recent orders |
+| Products | Search, stock indicators, inline edit/view |
+| Orders | Searchable table with status/payment badges |
+| Wallet | Balance display, withdrawal, transaction history |
+
+### Wholesaler Portal (`/wholesaler`)
+
+| Feature | Details |
+|---------|---------|
+| Dashboard | Order/spent/savings/credit stats, recent RFQs |
+| Bulk Ordering | Quantity-tiered pricing (10+/20+/50+) with automatic discount |
+| RFQ | Submit and track quote requests with response display |
+| Credit & Billing | Credit limit progress bar, payment terms, Net 30, transaction history |
 
 ### Admin Panel
 
@@ -331,6 +352,7 @@ ECOM is positioned as a platform rather than a simple online store. The target p
 | SEO | Meta title template, OG image, Google Analytics, Facebook Pixel, custom robots.txt |
 | Hero Slides | Manage carousel slides with images, headings, CTAs |
 | Reviews | Moderate customer reviews |
+| Activity Log | Type-filtered activity feed (vendor/wholesaler/product/order/coupon/settings/user) with relative timestamps |
 | Collapsible Sidebar | Responsive navigation with collapse/mobile drawer |
 | Search | Quick search in top bar |
 
@@ -351,8 +373,10 @@ ECOM is positioned as a platform rather than a simple online store. The target p
 | Feature | Details |
 |---------|---------|
 | Razorpay | Full checkout integration with payment modal |
-| Webhook Handler | `/api/webhooks/razorpay` endpoint for payment confirmations |
-| Demo Mode | Graceful fallback when Razorpay API key is not configured |
+| Order Creation API | `POST /api/razorpay/create-order` -- server-side Razorpay order creation with Basic Auth |
+| Signature Verification | `POST /api/razorpay/verify-payment` -- HMAC SHA-256 payment signature verification |
+| Webhook Handler | `/api/webhooks/razorpay` -- matches orders by `razorpay_order_id`, optional webhook secret verification |
+| Demo Mode | Graceful fallback when no `.env` keys are configured (marks paid directly) |
 | Order Tracking | Payment status (pending/paid/failed/refunded) and fulfillment tracking |
 
 ### Production & DevOps
@@ -617,19 +641,24 @@ ecommerce-platform/
 +-- src/
 |   +-- app/                          # Next.js App Router
 |   |   +-- (storefront)/             # Customer-facing pages
-|   |   |   +-- page.tsx              # Home page
+|   |   |   +-- page.tsx              # Home page (hero, categories, products)
 |   |   |   +-- products/             # Product listing & detail
 |   |   |   +-- cart/                 # Cart page
-|   |   |   +-- checkout/             # Checkout with Razorpay
+|   |   |   +-- checkout/             # Checkout with Razorpay (live + demo)
 |   |   |   +-- account/              # User dashboard
+|   |   |   |   +-- gift-cards/       # Gift card balance & history
+|   |   |   |   +-- loyalty/          # Loyalty tiers & points history
 |   |   |   +-- auth/                 # Login/Register
+|   |   |   +-- vendor/               # Vendor portal (dashboard, products, orders, wallet)
+|   |   |   +-- wholesaler/           # Wholesaler portal (dashboard, products, RFQ, credit)
 |   |   |   +-- about/                # About page
 |   |   |   +-- contact/              # Contact page
 |   |   |   +-- faq/                  # FAQ page
 |   |   |   +-- policies/             # Shipping/Returns/Terms/Privacy
-|   |   |   +-- order-confirmation/   # Post-purchase success page
+|   |   |   +-- order-confirmation/   # Post-purchase success page (live order data)
 |   |   +-- (admin)/admin/            # Admin panel
 |   |   |   +-- page.tsx              # Dashboard
+|   |   |   +-- activity/             # Activity log (type-filtered)
 |   |   |   +-- products/             # Product management
 |   |   |   +-- orders/               # Order management
 |   |   |   +-- customers/            # Customer list
@@ -643,17 +672,21 @@ ecommerce-platform/
 |   |   |   +-- chat/                 # Customer AI chat
 |   |   |   +-- admin/chat/           # Admin AI copilot
 |   |   |   +-- invoice/              # Invoice PDF generation
+|   |   |   +-- razorpay/             # Payment order creation & verification
 |   |   |   +-- webhooks/razorpay/    # Payment webhook
 |   |   +-- loading.tsx               # Global loading state
 |   +-- components/
 |   |   +-- storefront/               # Customer-facing components
+|   |   |   +-- sections/
+|   |   |   |   +-- hero-section.tsx  # Sale-style carousel with progress bar
+|   |   |   +-- smart-mega-menu.tsx   # Roadmap grid mega menu (L1/L2/L3)
 |   |   +-- admin/                    # Admin components
 |   |   +-- ui/                       # Shared UI primitives
-|   |       +-- accessibility.tsx     # SkipLink, FocusRing
+|   |   |   +-- accessibility.tsx     # SkipLink, FocusRing
 |   +-- lib/
 |   |   +-- supabase/                 # Supabase client config
 |   |   +-- services/                 # Data services
-|   |   |   +-- products.ts           # Product queries
+|   |   |   +-- products.ts           # Product queries (automotive/industrial themed)
 |   |   |   +-- admin.ts              # Admin queries
 |   |   |   +-- user.ts               # User profile/orders
 |   |   |   +-- email.ts              # Transactional email templates
@@ -661,15 +694,17 @@ ecommerce-platform/
 |   |   |   +-- sentry.ts             # Error monitoring wrapper
 |   |   |   +-- rate-limiter.ts       # API rate limiting
 |   |   |   +-- logger.ts             # Structured logging
+|   |   |   +-- homepage.ts           # Homepage data (with Supabase flag gate)
 |   |   +-- contexts/                 # React contexts
 |   |   |   +-- auth-context.tsx       # Auth state
 |   |   |   +-- cart-context.tsx       # Cart state (localStorage)
 |   |   |   +-- __tests__/            # Context unit tests
 |   |   |       +-- cart-context.test.tsx
-|   |   +-- types/index.ts            # Full TypeScript types
+|   |   +-- types/index.ts            # Full TypeScript types (incl. razorpay_order_id)
 |   +-- test/
 |   |   +-- setup.tsx                 # Vitest setup with mocks
 |   +-- middleware.ts                 # Rate limiting + security headers
++-- public/images/                    # Local image assets (hero, products, banners, instagram, categories)
 +-- EcommerceApi/                     # .NET 8 Backend
 |   +-- Controllers/                  # API controllers
 |   +-- Data/                         # EF Core DbContext

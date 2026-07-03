@@ -63,16 +63,6 @@ const config: Config = {
         body: ["0.9375rem", { lineHeight: "1.6" }],
         caption: ["0.75rem", { lineHeight: "1.5", letterSpacing: "0.1em" }],
       },
-      spacing: {
-        "8": "8px",
-        "16": "16px",
-        "24": "24px",
-        "32": "32px",
-        "48": "48px",
-        "64": "64px",
-        "80": "80px",
-        "120": "120px",
-      },
       boxShadow: {
         card: "0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03)",
         "card-hover": "0 4px 12px rgba(0,0,0,0.06), 0 8px 24px rgba(0,0,0,0.05)",

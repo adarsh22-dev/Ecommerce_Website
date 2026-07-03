@@ -88,7 +88,6 @@ export default function CheckoutPage() {
     setProcessing(true);
 
     try {
-      // Create order in Supabase
       const supabase = (await import("@/lib/supabase/client")).createClient();
 
       const { data: order, error: orderError } = await supabase
@@ -122,7 +121,6 @@ export default function CheckoutPage() {
 
       if (orderError) throw orderError;
 
-      // Create order items
       const orderItems = items.map((item) => ({
         order_id: order.id,
         product_id: item.product.id,
@@ -140,30 +138,58 @@ export default function CheckoutPage() {
 
       if (itemsError) throw itemsError;
 
-      // Initialize Razorpay payment
       const razorpayKey = process.env.NEXT_PUBLIC_RAZORPAY_PUBLISHABLE_KEY;
 
       if (razorpayKey) {
-        // Load Razorpay script and open checkout
+        const createRes = await fetch("/api/razorpay/create-order", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            amount: total,
+            currency: "INR",
+            receipt: `order_${order.id}`,
+          }),
+        });
+
+        const razorpayOrder = await createRes.json();
+        if (!createRes.ok) throw new Error(razorpayOrder.error || "Failed to create payment");
+
+        await supabase
+          .from("orders")
+          .update({ razorpay_order_id: razorpayOrder.razorpay_order_id })
+          .eq("id", order.id);
+
         await loadRazorpayScript();
 
         const options = {
           key: razorpayKey,
-          amount: Math.round(total * 100), // Amount in paise
-          currency: "USD",
+          amount: razorpayOrder.amount,
+          currency: razorpayOrder.currency,
           name: "ECOM",
           description: `Order ${order.id}`,
-          order_id: order.id,
+          order_id: razorpayOrder.razorpay_order_id,
           prefill: {
             name: shipping.fullName || profile?.full_name,
             email: shipping.email || user.email,
             contact: shipping.phone || "",
           },
-          theme: {
-            color: "#2563EB",
-          },
+          theme: { color: "#2563EB" },
           handler: async function (response: any) {
-            // Payment successful
+            const verifyRes = await fetch("/api/razorpay/verify-payment", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+              }),
+            });
+
+            if (!verifyRes.ok) {
+              toast.error("Payment verification failed. Contact support with your order ID.");
+              return;
+            }
+
             await supabase
               .from("orders")
               .update({
@@ -173,16 +199,15 @@ export default function CheckoutPage() {
               })
               .eq("id", order.id);
 
-            // Add to timeline
             await supabase.from("order_timeline").insert({
               order_id: order.id,
               status: "pending",
-              note: "Order placed successfully",
+              note: "Order placed successfully via Razorpay",
               created_by: user.id,
             });
 
             clearCart();
-            router.push(`/order-confirmation`);
+            router.push(`/order-confirmation?id=${order.id}`);
           },
           modal: {
             ondismiss: function () {
@@ -194,7 +219,6 @@ export default function CheckoutPage() {
         const razorpay = new (window as any).Razorpay(options);
         razorpay.open();
       } else {
-        // Demo mode - no Razorpay configured
         await supabase
           .from("orders")
           .update({
@@ -206,13 +230,13 @@ export default function CheckoutPage() {
         await supabase.from("order_timeline").insert({
           order_id: order.id,
           status: "pending",
-          note: "Order placed successfully (demo)",
+          note: "Order placed successfully (demo — no Razorpay key)",
           created_by: user.id,
         });
 
         clearCart();
-        router.push(`/order-confirmation`);
-        toast.success("Order placed! (Demo mode)");
+        router.push(`/order-confirmation?id=${order.id}`);
+        toast.success("Order placed! (Demo mode — add Razorpay keys to go live)");
       }
     } catch (err: any) {
       console.error("Order error:", err);
