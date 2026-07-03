@@ -476,17 +476,19 @@ export default function CheckoutPage() {
           <div className="lg:col-span-1">
             <div className="card p-6 sticky top-24 space-y-6">
               {/* Coupon */}
-              <div>
-                <h3 className="font-semibold mb-3">Promo Code</h3>
+              <div className="bg-muted/40 rounded-xl p-4 border border-border/60">
+                <label className="text-xs font-semibold text-foreground-secondary uppercase tracking-wider mb-2 block">
+                  Promo Code
+                </label>
                 <div className="flex gap-2">
                   <input
                     type="text"
                     value={couponCode}
                     onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
                     placeholder="Enter code"
-                    className="flex-1 h-10 px-3 border border-border rounded-lg text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+                    className="flex-1 h-10 px-3 border border-border rounded-lg text-sm bg-white focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
                   />
-                  <Button variant="secondary" size="sm" onClick={handleApplyCoupon}>
+                  <Button variant="secondary" size="sm" onClick={handleApplyCoupon} className="shrink-0">
                     Apply
                   </Button>
                 </div>
