@@ -44,6 +44,25 @@ export default function WholesalerLayout({ children }: { children: React.ReactNo
     );
   }
 
+  if (profile?.status === "pending") {
+    return (
+      <div className="section-padding">
+        <div className="container-xl max-w-2xl text-center">
+          <TrendingUp className="w-16 h-16 text-yellow-400 mx-auto mb-6" />
+          <h1 className="font-serif text-section-heading text-foreground mb-4">Account Pending Approval</h1>
+          <p className="text-foreground-secondary mb-4">Your wholesaler account is under review. An administrator will review your registration and activate your account shortly.</p>
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-50 text-yellow-700 text-sm font-medium mb-8">
+            <span className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse" />
+            Pending Approval
+          </div>
+          <div>
+            <Link href="/"><Button variant="secondary">Go Home</Button></Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="section-padding">
       <div className="container-xl">

@@ -1,15 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import { Check, ChevronRight, CreditCard, Truck, Package } from "lucide-react";
+import { Check, ChevronRight, CreditCard, Truck, Package, ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useCart } from "@/lib/contexts/cart-context";
 import { useAuth } from "@/lib/contexts/auth-context";
 import { formatCurrency } from "@/lib/utils";
+import { ProductCard } from "@/components/storefront/product-card";
 import toast from "react-hot-toast";
+import type { ProductWithDetails } from "@/lib/types";
 
 type Step = "shipping" | "payment" | "review";
 
@@ -37,12 +41,24 @@ export default function CheckoutPage() {
   const [couponDiscount, setCouponDiscount] = useState(0);
   const [couponMessage, setCouponMessage] = useState("");
   const [processing, setProcessing] = useState(false);
+  const [crossSellProducts, setCrossSellProducts] = useState<ProductWithDetails[]>([]);
   const { items, subtotal, clearCart } = useCart();
   const { user, profile } = useAuth();
   const router = useRouter();
   const shippingCost = shippingMethod === "express" ? 15 : subtotal > 100 ? 0 : 10;
   const tax = subtotal * 0.08;
   const total = subtotal + shippingCost + tax - couponDiscount;
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const { getCrossSellProducts } = await import("@/lib/services/products");
+        const excludedIds = items.map((i) => i.product.id);
+        const all = getCrossSellProducts("", 6) as ProductWithDetails[];
+        setCrossSellProducts(all.filter((p) => !excludedIds.includes(p.id)).slice(0, 4));
+      } catch { /* silent */ }
+    })();
+  }, [items]);
 
   const currentStepIndex = steps.findIndex((s) => s.id === currentStep);
 
@@ -513,6 +529,25 @@ export default function CheckoutPage() {
           </div>
         </div>
       </div>
+
+      {crossSellProducts.length > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="mt-16 max-w-4xl mx-auto"
+        >
+          <div className="mb-6">
+            <p className="text-caption text-primary">You might also like</p>
+            <h2 className="font-serif text-2xl text-foreground">Complete your purchase</h2>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {crossSellProducts.map((p, index) => (
+              <ProductCard key={p.id} product={p} index={index} />
+            ))}
+          </div>
+        </motion.div>
+      )}
     </div>
   );
 }

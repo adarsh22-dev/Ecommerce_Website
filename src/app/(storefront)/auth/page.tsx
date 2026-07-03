@@ -19,6 +19,15 @@ export default function AuthPage() {
   const [accountType, setAccountType] = useState<"customer" | "vendor" | "wholesaler">("customer");
   const { signIn, signUp, signInWithGoogle } = useAuth();
 
+  const getRoleRedirect = (role?: string) => {
+    switch (role) {
+      case "admin": case "super_admin": return "/admin";
+      case "vendor": return "/vendor";
+      case "wholesaler": return "/wholesaler";
+      default: return "/account";
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -30,14 +39,35 @@ export default function AuthPage() {
           toast.error(result.error);
         } else {
           toast.success("Signed in successfully!");
-          window.location.href = "/account";
+          // Fetch profile to determine redirect
+          const { createClient } = await import("@/lib/supabase/client");
+          const supabase = createClient();
+          const { data: { user } } = await supabase.auth.getUser();
+          if (user) {
+            const { data: profile } = await supabase
+              .from("profiles")
+              .select("role, status")
+              .eq("id", user.id)
+              .single();
+            if (profile && (profile.role === "vendor" || profile.role === "wholesaler") && profile.status === "pending") {
+              toast.error("Your account is pending admin approval. Please wait.");
+              setLoading(false);
+              return;
+            }
+            window.location.href = getRoleRedirect(profile?.role);
+          } else {
+            window.location.href = "/account";
+          }
         }
       } else {
         const result = await signUp(email, password, fullName, accountType);
         if (result.error) {
           toast.error(result.error);
         } else {
-          toast.success("Account created! Check your email for verification.");
+          const msg = accountType === "customer"
+            ? "Account created! Check your email for verification."
+            : "Registration submitted! Admin will review and approve your account.";
+          toast.success(msg);
         }
       }
     } catch {

@@ -84,17 +84,25 @@ export function Header() {
                 </Link>
                 <div className="absolute right-0 top-full pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
                   <div className="bg-white rounded-xl shadow-lg border border-border py-2 min-w-[180px]">
-                    <Link href="/account" className="block px-4 py-2 text-sm hover:bg-muted transition-colors">
-                      My Account
-                    </Link>
-                    <Link href="/account/orders" className="block px-4 py-2 text-sm hover:bg-muted transition-colors">
-                      Orders
-                    </Link>
-                    {profile?.role === "admin" && (
-                      <Link href="/admin" className="block px-4 py-2 text-sm hover:bg-muted transition-colors">
-                        Admin Panel
-                      </Link>
-                    )}
+        <Link href="/account" className="block px-4 py-2 text-sm hover:bg-muted transition-colors">
+          My Account
+        </Link>
+        <Link href="/account/orders" className="block px-4 py-2 text-sm hover:bg-muted transition-colors">
+          Orders
+        </Link>
+        {profile?.role === "admin" || profile?.role === "super_admin" ? (
+          <Link href="/admin" className="block px-4 py-2 text-sm hover:bg-muted transition-colors">
+            Admin Panel
+          </Link>
+        ) : profile?.role === "vendor" ? (
+          <Link href="/vendor" className="block px-4 py-2 text-sm hover:bg-muted transition-colors">
+            Vendor Dashboard
+          </Link>
+        ) : profile?.role === "wholesaler" ? (
+          <Link href="/wholesaler" className="block px-4 py-2 text-sm hover:bg-muted transition-colors">
+            Wholesaler Dashboard
+          </Link>
+        ) : null}
                     <hr className="my-1 border-border" />
                     <button
                       onClick={signOut}

@@ -679,7 +679,13 @@ export async function getRelatedProducts(
   limit: number = 4
 ) {
   const supabase = getSupabase();
-  if (!supabase) return [];
+  if (!supabase) {
+    const localProducts = readLocalImportedRecords("products") as any[];
+    const merged = filterDeletedRecords("products", [...fallbackProducts, ...localProducts]);
+    return merged
+      .filter((p) => p.category_id === categoryId && p.id !== productId && p.status !== "draft")
+      .slice(0, limit);
+  }
 
   const { data, error } = await supabase
     .from("products")
@@ -689,6 +695,25 @@ export async function getRelatedProducts(
     .neq("id", productId)
     .limit(limit);
 
-  if (error) throw error;
+  if (error) {
+    console.error("getRelatedProducts failed", error);
+    const localProducts = readLocalImportedRecords("products") as any[];
+    const merged = filterDeletedRecords("products", [...fallbackProducts, ...localProducts]);
+    return merged
+      .filter((p) => p.category_id === categoryId && p.id !== productId && p.status !== "draft")
+      .slice(0, limit);
+  }
   return data;
+}
+
+export function getCrossSellProducts(
+  productId: string,
+  limit: number = 4
+) {
+  const localProducts = readLocalImportedRecords("products") as any[];
+  const merged = filterDeletedRecords("products", [...fallbackProducts, ...localProducts]);
+  return merged
+    .filter((p) => p.id !== productId && p.status !== "draft")
+    .sort(() => Math.random() - 0.5)
+    .slice(0, limit);
 }

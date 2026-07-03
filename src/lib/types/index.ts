@@ -4,7 +4,7 @@ export type Database = {
       profiles: {
         Row: Profile;
         Insert: Omit<Profile, "created_at" | "updated_at">;
-        Update: Partial<Omit<Profile, "id" | "created_at">>;
+        Update: Partial<Omit<Profile, "id" | "created_at" | "status">>;
       };
       categories: {
         Row: Category;
@@ -124,6 +124,7 @@ export interface Profile {
   phone: string | null;
   avatar_url: string | null;
   role: "customer" | "admin" | "wholesaler" | "vendor" | "super_admin";
+  status: "pending" | "approved" | "suspended" | "rejected";
   created_at: string;
   updated_at: string;
 }

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, Package, ShoppingCart, Wallet, Store, LogOut } from "lucide-react";
+import { LayoutDashboard, Package, ShoppingCart, Wallet, Store, LogOut, QrCode } from "lucide-react";
 import { useAuth } from "@/lib/contexts/auth-context";
 import { Button } from "@/components/ui/button";
 
@@ -11,6 +11,7 @@ const sidebarLinks = [
   { label: "Products", href: "/vendor/products", icon: Package },
   { label: "Orders", href: "/vendor/orders", icon: ShoppingCart },
   { label: "Wallet", href: "/vendor/wallet", icon: Wallet },
+  { label: "Payment Setup", href: "/vendor/payment", icon: QrCode },
 ];
 
 export default function VendorLayout({ children }: { children: React.ReactNode }) {
@@ -39,6 +40,25 @@ export default function VendorLayout({ children }: { children: React.ReactNode }
           <h1 className="font-serif text-section-heading text-foreground mb-4">Access Restricted</h1>
           <p className="text-foreground-secondary mb-8">This area is for vendors only. If you are a vendor, please contact the admin to set up your account.</p>
           <Link href="/"><Button variant="secondary">Go Home</Button></Link>
+        </div>
+      </div>
+    );
+  }
+
+  if (profile?.status === "pending") {
+    return (
+      <div className="section-padding">
+        <div className="container-xl max-w-2xl text-center">
+          <Store className="w-16 h-16 text-yellow-400 mx-auto mb-6" />
+          <h1 className="font-serif text-section-heading text-foreground mb-4">Account Pending Approval</h1>
+          <p className="text-foreground-secondary mb-4">Your vendor account is under review. An administrator will review your registration and activate your account shortly.</p>
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-50 text-yellow-700 text-sm font-medium mb-8">
+            <span className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse" />
+            Pending Approval
+          </div>
+          <div>
+            <Link href="/"><Button variant="secondary">Go Home</Button></Link>
+          </div>
         </div>
       </div>
     );

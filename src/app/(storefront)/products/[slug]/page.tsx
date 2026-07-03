@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
+import Head from "next/head";
 import {
   Star, Heart, ShoppingBag, Minus, Plus, ChevronRight, Truck,
   RotateCcw, Shield, Facebook, Twitter, MessageCircle, Link2, Check,
@@ -160,14 +161,22 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
   useEffect(() => {
     async function fetchProduct() {
       try {
-        const { getProductBySlug, getRelatedProducts: fetchRelated } = await import("@/lib/services/products");
+        const { getProductBySlug, getRelatedProducts: fetchRelated, getCrossSellProducts } = await import("@/lib/services/products");
         const data = await getProductBySlug(resolvedParams.slug);
         setProduct(data as ProductWithDetails);
 
         if (data.category_id) {
           try {
-            const related = await fetchRelated(data.category_id, data.id, 4);
+            const related = await fetchRelated(data.category_id, data.id, 6);
             setRelatedProducts(related as ProductWithDetails[]);
+          } catch { /* not critical */ }
+        }
+
+        // Fetch cross-sell from all products if related is too few
+        if (!data.category_id) {
+          try {
+            const cross = getCrossSellProducts(data.id, 4);
+            setRelatedProducts(cross as ProductWithDetails[]);
           } catch { /* not critical */ }
         }
 
@@ -196,6 +205,35 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
       window.localStorage.setItem("ecom-recent-products", JSON.stringify(next));
       setRecentProducts(next as ProductWithDetails[]);
     } catch { /* ignore */ }
+  }, [product]);
+
+  useEffect(() => {
+    if (!product) return;
+    const metaTitle = product.meta_title || `${product.title} | ECOM`;
+    document.title = metaTitle;
+    let metaDesc = document.querySelector("meta[name='description']");
+    if (!metaDesc) {
+      metaDesc = document.createElement("meta");
+      metaDesc.setAttribute("name", "description");
+      document.head.appendChild(metaDesc);
+    }
+    metaDesc.setAttribute("content", product.meta_description || product.description || "");
+    let ogImage = document.querySelector("meta[property='og:image']");
+    if (!ogImage) {
+      ogImage = document.createElement("meta");
+      ogImage.setAttribute("property", "og:image");
+      document.head.appendChild(ogImage);
+    }
+    if (product.og_image_url || product.product_images?.[0]?.image_url) {
+      ogImage.setAttribute("content", product.og_image_url || product.product_images[0].image_url);
+    }
+    let ogTitle = document.querySelector("meta[property='og:title']");
+    if (!ogTitle) {
+      ogTitle = document.createElement("meta");
+      ogTitle.setAttribute("property", "og:title");
+      document.head.appendChild(ogTitle);
+    }
+    ogTitle.setAttribute("content", metaTitle);
   }, [product]);
 
   useEffect(() => {
