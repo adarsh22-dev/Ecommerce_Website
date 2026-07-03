@@ -39,15 +39,18 @@ export default function AuthPage() {
           toast.error(result.error);
         } else {
           toast.success("Signed in successfully!");
-          // Fetch profile to determine redirect
-          const { createClient } = await import("@/lib/supabase/client");
-          const supabase = createClient();
-          const { data: { user } } = await supabase.auth.getUser();
-          if (user) {
+          const supabaseModule = await import("@/lib/supabase/client");
+          const supabase = supabaseModule.createClient();
+          if (!supabase || !supabase.auth) {
+            window.location.href = "/account";
+            return;
+          }
+          const { data: { user: authUser } } = await supabase.auth.getUser();
+          if (authUser) {
             const { data: profile } = await supabase
               .from("profiles")
               .select("role, status")
-              .eq("id", user.id)
+              .eq("id", authUser.id)
               .single();
             if (profile && (profile.role === "vendor" || profile.role === "wholesaler") && profile.status === "pending") {
               toast.error("Your account is pending admin approval. Please wait.");
@@ -68,6 +71,23 @@ export default function AuthPage() {
             ? "Account created! Check your email for verification."
             : "Registration submitted! Admin will review and approve your account.";
           toast.success(msg);
+          // If auto-confirmed, redirect immediately
+          if (result.user) {
+            const supabaseModule = await import("@/lib/supabase/client");
+            const supabase = supabaseModule.createClient();
+            if (supabase && supabase.auth) {
+              const { data: profile } = await supabase
+                .from("profiles")
+                .select("role, status")
+                .eq("id", result.user.id)
+                .single();
+              if (profile && (profile.role === "vendor" || profile.role === "wholesaler") && profile.status === "pending") {
+                toast.success("Registration submitted! Admin will review and approve your account.");
+              } else {
+                window.location.href = getRoleRedirect(profile?.role);
+              }
+            }
+          }
         }
       }
     } catch {
@@ -95,7 +115,6 @@ export default function AuthPage() {
         </div>
 
         <div className="card p-8">
-          {/* Tab switcher */}
           <div className="flex bg-muted rounded-lg p-1 mb-8">
             {(["signin", "signup"] as const).map((tab) => (
               <button

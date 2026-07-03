@@ -120,6 +120,22 @@ export default function CheckoutPage() {
 
     try {
       const supabase = (await import("@/lib/supabase/client")).createClient();
+      if (!supabase || !supabase.from) {
+        const fakeId = `local-${Date.now()}`;
+        try {
+          window.localStorage.setItem("ecom-last-order", JSON.stringify({
+            id: fakeId,
+            items: items.map(i => ({ title: i.product.title, quantity: i.quantity, price: i.variant?.price || i.product.sale_price || i.product.price })),
+            total,
+            gst_number: gstNumber || null,
+            date: new Date().toISOString(),
+          }));
+        } catch {}
+        clearCart();
+        router.push(`/order-confirmation?id=${fakeId}`);
+        toast.success("Order placed! (Demo mode — no database)");
+        return;
+      }
 
       const { data: order, error: orderError } = await supabase
         .from("orders")

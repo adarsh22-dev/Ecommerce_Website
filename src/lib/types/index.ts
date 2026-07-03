@@ -101,6 +101,11 @@ export type Database = {
         Insert: Omit<PageSeo, "id">;
         Update: Partial<Omit<PageSeo, "id">>;
       };
+      vendor_profiles: {
+        Row: VendorProfile;
+        Insert: Omit<VendorProfile, "id" | "created_at" | "updated_at">;
+        Update: Partial<Omit<VendorProfile, "id" | "created_at">>;
+      };
     };
     Enums: {
       user_role: "customer" | "admin" | "wholesaler" | "vendor" | "super_admin";
@@ -303,6 +308,7 @@ export interface Order {
     | "cancelled";
   razorpay_order_id: string | null;
   razorpay_payment_id: string | null;
+  gst_number: string | null;
   tracking_number: string | null;
   tracking_carrier: string | null;
   notes: string | null;
@@ -524,6 +530,8 @@ export interface VendorProfile {
   bank_account_number: string | null;
   bank_ifsc: string | null;
   bank_name: string | null;
+  account_holder_name: string | null;
+  upi_id: string | null;
   commission_rate: number;
   status: "pending" | "approved" | "suspended" | "rejected";
   verification_status: "unverified" | "pending" | "verified" | "rejected";

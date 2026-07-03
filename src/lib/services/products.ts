@@ -713,7 +713,14 @@ export function getCrossSellProducts(
   const localProducts = readLocalImportedRecords("products") as any[];
   const merged = filterDeletedRecords("products", [...fallbackProducts, ...localProducts]);
   return merged
-    .filter((p) => p.id !== productId && p.status !== "draft")
+    .filter((p: any) => p.id !== productId && p.status !== "draft")
     .sort(() => Math.random() - 0.5)
-    .slice(0, limit);
+    .slice(0, limit)
+    .map((p: any) => ({
+      ...p,
+      product_options: p.product_options || [],
+      product_variants: p.product_variants || [],
+      review_count: p.review_count || 0,
+      average_rating: p.average_rating || 0,
+    }));
 }

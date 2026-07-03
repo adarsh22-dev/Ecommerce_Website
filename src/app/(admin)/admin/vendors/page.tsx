@@ -45,22 +45,22 @@ export default function VendorsPage() {
     }
   };
 
+  const getStatus = (v: Profile) => v.status || "approved";
+
   const filteredVendors = vendors.filter((v) => {
     const matchesSearch =
       (v.full_name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
       (v.email || "").toLowerCase().includes(searchQuery.toLowerCase());
-    const s = (v as any).status || "approved";
+    const s = getStatus(v);
     const matchesStatus = statusFilter === "all" || s === statusFilter;
     return matchesSearch && matchesStatus;
   });
 
   const stats = {
     total: vendors.length,
-    pending: vendors.filter((v) => (v as any).status === "pending").length,
-    approved: vendors.filter((v) => !(v as any).status || (v as any).status === "approved").length,
+    pending: vendors.filter((v) => getStatus(v) === "pending").length,
+    approved: vendors.filter((v) => getStatus(v) === "approved").length,
   };
-
-  const getStatus = (v: Profile) => (v as any).status || "approved";
 
   return (
     <div className="space-y-6">

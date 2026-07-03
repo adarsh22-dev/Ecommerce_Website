@@ -21,7 +21,7 @@ interface AuthContextType {
     password: string,
     fullName: string,
     role?: "customer" | "vendor" | "wholesaler"
-  ) => Promise<{ error?: string }>;
+  ) => Promise<{ error?: string; user?: User | null }>;
   signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
@@ -32,7 +32,7 @@ const AuthContext = createContext<AuthContextType>({
   profile: null,
   loading: true,
   signIn: async () => ({}),
-  signUp: async () => ({}),
+  signUp: async () => ({ error: "Auth not configured" }),
   signInWithGoogle: async () => {},
   signOut: async () => {},
   refreshProfile: async () => {},
@@ -43,28 +43,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const supabase = createClient();
+  const isReady = supabase && supabase.auth;
 
   const fetchProfile = useCallback(async (userId: string) => {
+    if (!isReady) return null;
     const { data } = await supabase
       .from("profiles")
       .select("*")
       .eq("id", userId)
       .single();
-    return data;
-  }, [supabase]);
+    return data as Profile | null;
+  }, [supabase, isReady]);
 
   const refreshProfile = useCallback(async () => {
-    if (user) {
+    if (user && isReady) {
       const p = await fetchProfile(user.id);
       setProfile(p);
     }
-  }, [user, fetchProfile]);
+  }, [user, fetchProfile, isReady]);
 
   useEffect(() => {
+    if (!isReady) {
+      setLoading(false);
+      return;
+    }
+
     const getUser = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+      const { data: { user } } = await supabase.auth.getUser();
       setUser(user);
       if (user) {
         const p = await fetchProfile(user.id);
@@ -75,28 +80,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     getUser();
 
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event: AuthChangeEvent, session: Session | null) => {
-      const currentUser = session?.user ?? null;
-      setUser(currentUser);
-      if (currentUser) {
-        const p = await fetchProfile(currentUser.id);
-        setProfile(p);
-      } else {
-        setProfile(null);
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (_event: AuthChangeEvent, session: Session | null) => {
+        const currentUser = session?.user ?? null;
+        setUser(currentUser);
+        if (currentUser) {
+          const p = await fetchProfile(currentUser.id);
+          setProfile(p);
+        } else {
+          setProfile(null);
+        }
+        setLoading(false);
       }
-      setLoading(false);
-    });
+    );
 
     return () => subscription.unsubscribe();
-  }, [supabase, fetchProfile]);
+  }, [supabase, fetchProfile, isReady]);
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    if (!isReady) return { error: "Supabase not configured. Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to .env.local" };
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) return { error: error.message };
     return {};
   };
@@ -107,28 +110,38 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     fullName: string,
     role: "customer" | "vendor" | "wholesaler" = "customer"
   ) => {
-    const { error } = await supabase.auth.signUp({
+    if (!isReady) return { error: "Supabase not configured. Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to .env.local" };
+    const { error, data } = await supabase.auth.signUp({
       email,
       password,
-      options: {
-        data: { full_name: fullName, role },
-      },
+      options: { data: { full_name: fullName, role } },
     });
     if (error) return { error: error.message };
-    return {};
+    // Try to create the profile immediately for auto-confirmed users
+    if (data?.user) {
+      try {
+        await supabase.from("profiles").upsert({
+          id: data.user.id,
+          email: email,
+          full_name: fullName,
+          role: role,
+          status: role === "vendor" || role === "wholesaler" ? "pending" : "approved",
+        }, { onConflict: "id" });
+      } catch { /* profile may already exist from trigger */ }
+    }
+    return { user: data?.user ?? null };
   };
 
   const signInWithGoogle = async () => {
+    if (!isReady) return;
     await supabase.auth.signInWithOAuth({
       provider: "google",
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-      },
+      options: { redirectTo: `${window.location.origin}/auth/callback` },
     });
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    if (isReady) await supabase.auth.signOut();
     setUser(null);
     setProfile(null);
   };
