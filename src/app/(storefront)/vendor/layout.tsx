@@ -92,7 +92,7 @@ export default function VendorLayout({ children }: { children: React.ReactNode }
                 </Link>
               ))}
               <button
-                onClick={() => { signOut(); router.push("/"); }}
+                onClick={async () => { await signOut(); router.push("/"); }}
                 className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-destructive hover:bg-muted transition-colors w-full"
               >
                 <LogOut className="w-4 h-4" />

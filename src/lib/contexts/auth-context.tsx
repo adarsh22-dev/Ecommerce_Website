@@ -22,7 +22,7 @@ interface AuthContextType {
     fullName: string,
     role?: "customer" | "vendor" | "wholesaler"
   ) => Promise<{ error?: string; user?: User | null }>;
-  signInWithGoogle: () => Promise<void>;
+  signInWithGoogle: (redirectTo?: string) => Promise<void>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
 }
@@ -43,10 +43,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const supabase = createClient();
-  const isReady = supabase && supabase.auth;
+  const isReady = !!supabase?.auth;
 
   const fetchProfile = useCallback(async (userId: string) => {
-    if (!isReady) return null;
+    if (!isReady || !supabase) return null;
     const { data } = await supabase
       .from("profiles")
       .select("*")
@@ -63,7 +63,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [user, fetchProfile, isReady]);
 
   useEffect(() => {
-    if (!isReady) {
+    if (!isReady || !supabase) {
       setLoading(false);
       return;
     }
@@ -98,7 +98,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [supabase, fetchProfile, isReady]);
 
   const signIn = async (email: string, password: string) => {
-    if (!isReady) return { error: "Supabase not configured. Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to .env.local" };
+    if (!isReady || !supabase) return { error: "Supabase not configured. Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to .env.local" };
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) return { error: error.message };
     return {};
@@ -110,7 +110,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     fullName: string,
     role: "customer" | "vendor" | "wholesaler" = "customer"
   ) => {
-    if (!isReady) return { error: "Supabase not configured. Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to .env.local" };
+    if (!isReady || !supabase) return { error: "Supabase not configured. Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to .env.local" };
     const { error, data } = await supabase.auth.signUp({
       email,
       password,
@@ -132,16 +132,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return { user: data?.user ?? null };
   };
 
-  const signInWithGoogle = async () => {
-    if (!isReady) return;
+  const signInWithGoogle = async (redirectTo?: string) => {
+    if (!isReady || !supabase) return;
     await supabase.auth.signInWithOAuth({
       provider: "google",
-      options: { redirectTo: `${window.location.origin}/auth/callback` },
+      options: { redirectTo: redirectTo || `${window.location.origin}/auth/callback` },
     });
   };
 
   const signOut = async () => {
-    if (isReady) await supabase.auth.signOut();
+    if (isReady && supabase) await supabase.auth.signOut();
     setUser(null);
     setProfile(null);
   };

@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Mail, Lock, User, Eye, EyeOff, Building2, Store } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/lib/contexts/auth-context";
+import { useSearchParams, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
 export default function AuthPage() {
@@ -18,13 +19,17 @@ export default function AuthPage() {
   const [loading, setLoading] = useState(false);
   const [accountType, setAccountType] = useState<"customer" | "vendor" | "wholesaler">("customer");
   const { signIn, signUp, signInWithGoogle } = useAuth();
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  const redirectTo = searchParams.get("redirect") || "/account";
 
   const getRoleRedirect = (role?: string) => {
     switch (role) {
       case "admin": case "super_admin": return "/admin";
       case "vendor": return "/vendor";
       case "wholesaler": return "/wholesaler";
-      default: return "/account";
+      default: return redirectTo;
     }
   };
 
@@ -42,7 +47,7 @@ export default function AuthPage() {
           const supabaseModule = await import("@/lib/supabase/client");
           const supabase = supabaseModule.createClient();
           if (!supabase || !supabase.auth) {
-            window.location.href = "/account";
+            router.push(redirectTo);
             return;
           }
           const { data: { user: authUser } } = await supabase.auth.getUser();
@@ -57,9 +62,9 @@ export default function AuthPage() {
               setLoading(false);
               return;
             }
-            window.location.href = getRoleRedirect(profile?.role);
+            router.push(getRoleRedirect(profile?.role));
           } else {
-            window.location.href = "/account";
+            router.push(redirectTo);
           }
         }
       } else {
@@ -84,7 +89,7 @@ export default function AuthPage() {
               if (profile && (profile.role === "vendor" || profile.role === "wholesaler") && profile.status === "pending") {
                 toast.success("Registration submitted! Admin will review and approve your account.");
               } else {
-                window.location.href = getRoleRedirect(profile?.role);
+                router.push(getRoleRedirect(profile?.role));
               }
             }
           }
@@ -97,7 +102,10 @@ export default function AuthPage() {
   };
 
   const handleGoogleSignIn = async () => {
-    await signInWithGoogle();
+    // Pass redirect to OAuth flow
+    const origin = window.location.origin;
+    const redirectUrl = `${origin}/auth/callback?redirect=${encodeURIComponent(redirectTo)}`;
+    await signInWithGoogle(redirectUrl);
   };
 
   return (
