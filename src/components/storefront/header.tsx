@@ -98,10 +98,6 @@ export function Header() {
           <Link href="/vendor" className="block px-4 py-2 text-sm hover:bg-muted transition-colors">
             Vendor Dashboard
           </Link>
-        ) : profile?.role === "wholesaler" ? (
-          <Link href="/wholesaler" className="block px-4 py-2 text-sm hover:bg-muted transition-colors">
-            Wholesaler Dashboard
-          </Link>
         ) : null}
                     <hr className="my-1 border-border" />
                     <button

@@ -71,7 +71,7 @@ export default function AboutPage() {
           </h1>
           <p className="text-lg text-foreground-secondary max-w-2xl mx-auto leading-relaxed">
             A multi-tenant enterprise commerce platform built with Next.js, .NET 8, Supabase,
-            and AI for B2C, B2B, vendor, wholesaler, and marketplace scenarios.
+            and AI for B2C, B2B, vendor, and marketplace scenarios.
           </p>
         </motion.div>
 
@@ -109,7 +109,7 @@ export default function AboutPage() {
         >
           <p className="text-lg leading-relaxed">
             Founded in 2024, ECOM was born from a simple idea: modern commerce needs more than a
-            storefront. It needs a flexible platform for customers, vendors, wholesalers, and
+            storefront. It needs a flexible platform for customers, vendors, and
             operators to collaborate at enterprise scale.
           </p>
           <p className="leading-relaxed">

@@ -20,7 +20,7 @@ interface AuthContextType {
     email: string,
     password: string,
     fullName: string,
-    role?: "customer" | "vendor" | "wholesaler"
+    role?: "customer" | "vendor"
   ) => Promise<{ error?: string; user?: User | null }>;
   signInWithGoogle: (redirectTo?: string) => Promise<void>;
   signOut: () => Promise<void>;
@@ -108,7 +108,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     email: string,
     password: string,
     fullName: string,
-    role: "customer" | "vendor" | "wholesaler" = "customer"
+    role: "customer" | "vendor" = "customer"
   ) => {
     if (!isReady || !supabase) return { error: "Supabase not configured. Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to .env.local" };
     const { error, data } = await supabase.auth.signUp({
@@ -125,7 +125,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           email: email,
           full_name: fullName,
           role: role,
-          status: role === "vendor" || role === "wholesaler" ? "pending" : "approved",
+          status: role === "vendor" ? "pending" : "approved",
         }, { onConflict: "id" });
       } catch { /* profile may already exist from trigger */ }
     }

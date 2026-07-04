@@ -21,7 +21,6 @@ import {
   Globe,
   Layout,
   Store,
-  Building2,
   Shield,
   History,
   LogOut,
@@ -51,7 +50,6 @@ const sidebarLinks: SidebarItem[] = [
   { label: "Settings", href: "/admin/settings", icon: Settings },
   { label: "SEO", href: "/admin/seo", icon: Globe },
   { label: "Vendors", href: "/admin/vendors", icon: Store },
-  { label: "Wholesalers", href: "/admin/wholesalers", icon: Building2 },
   { label: "Activity", href: "/admin/activity", icon: History },
   { label: "Super Admin", href: "/admin/super-admin", icon: Shield },
 ];
@@ -70,7 +68,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     if (loading) return;
     setAuthReady(true);
     if (!profile) {
-      router.replace("/auth?redirect=/admin");
+      router.replace("/admin/login");
     } else if (profile.role !== "admin" && profile.role !== "super_admin") {
       router.replace("/");
     }

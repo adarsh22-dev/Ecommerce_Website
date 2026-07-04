@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import {
-  History, Search, Filter, User, Package, ShoppingCart, Store, Building2,
+  History, Search, Filter, User, Package, ShoppingCart, Store,
   Settings, Shield, DollarSign, Tag, FileText, Clock,
 } from "lucide-react";
 
@@ -15,30 +15,27 @@ interface ActivityEntry {
   user: string;
   userRole: string;
   timestamp: string;
-  type: "vendor" | "wholesaler" | "product" | "order" | "settings" | "user" | "coupon";
+  type: "vendor" | "product" | "order" | "settings" | "user" | "coupon";
 }
 
 const mockActivities: ActivityEntry[] = [
   { id: "1", action: "approved", entity: "vendor", entityId: "TechWorld Electronics", user: "Admin", userRole: "super_admin", timestamp: new Date(Date.now() - 3600000).toISOString(), type: "vendor" },
   { id: "2", action: "updated commission rate", entity: "vendor", entityId: "Home Essentials", user: "Admin", userRole: "admin", timestamp: new Date(Date.now() - 7200000).toISOString(), type: "vendor" },
   { id: "3", action: "suspended", entity: "vendor", entityId: "Sports Arena", user: "Admin", userRole: "super_admin", timestamp: new Date(Date.now() - 14400000).toISOString(), type: "vendor" },
-  { id: "4", action: "approved credit limit increase", entity: "wholesaler", entityId: "Global Trade Corp", user: "Admin", userRole: "admin", timestamp: new Date(Date.now() - 86400000).toISOString(), type: "wholesaler" },
   { id: "5", action: "updated", entity: "product", entityId: "Hydraulic Cylinder HC-200", user: "Vendor", userRole: "vendor", timestamp: new Date(Date.now() - 172800000).toISOString(), type: "product" },
   { id: "6", action: "created", entity: "coupon", entityId: "SUMMER24", user: "Admin", userRole: "admin", timestamp: new Date(Date.now() - 259200000).toISOString(), type: "coupon" },
   { id: "7", action: "changed status to shipped", entity: "order", entityId: "ORD-1040", user: "System", userRole: "system", timestamp: new Date(Date.now() - 345600000).toISOString(), type: "order" },
   { id: "8", action: "updated payout method", entity: "vendor", entityId: "Fashion Hub", user: "Vendor", userRole: "vendor", timestamp: new Date(Date.now() - 432000000).toISOString(), type: "vendor" },
-  { id: "9", action: "registered", entity: "wholesaler", entityId: "Prime Distributors", user: "Prime Distributors", userRole: "wholesaler", timestamp: new Date(Date.now() - 518400000).toISOString(), type: "wholesaler" },
   { id: "10", action: "modified homepage sections", entity: "settings", entityId: "Homepage", user: "Admin", userRole: "admin", timestamp: new Date(Date.now() - 604800000).toISOString(), type: "settings" },
 ];
 
 const typeIcons: Record<string, React.ElementType> = {
-  vendor: Store, wholesaler: Building2, product: Package,
+  vendor: Store, product: Package,
   order: ShoppingCart, settings: Settings, user: User, coupon: Tag,
 };
 
 const typeColors: Record<string, string> = {
   vendor: "bg-blue-100 text-blue-600",
-  wholesaler: "bg-purple-100 text-purple-600",
   product: "bg-green-100 text-green-600",
   order: "bg-orange-100 text-orange-600",
   settings: "bg-gray-100 text-gray-600",
@@ -87,7 +84,6 @@ export default function ActivityPage() {
           >
             <option value="all">All Types</option>
             <option value="vendor">Vendor</option>
-            <option value="wholesaler">Wholesaler</option>
             <option value="product">Product</option>
             <option value="order">Order</option>
             <option value="coupon">Coupon</option>

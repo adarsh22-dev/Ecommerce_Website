@@ -60,7 +60,7 @@ export function SaleBannerIndustrial() {
                   transition={{ delay: 0.2, duration: 0.5 }}
                   className="text-amber-100/70 text-lg max-w-md leading-relaxed"
                 >
-                  Genuine truck parts, tractor components, and industrial machinery spares at wholesale prices. Pan-India delivery with fleet-order priority.
+                  Genuine truck parts, tractor components, and industrial machinery spares at competitive prices. Pan-India delivery with fleet-order priority.
                 </motion.p>
 
                 <motion.div

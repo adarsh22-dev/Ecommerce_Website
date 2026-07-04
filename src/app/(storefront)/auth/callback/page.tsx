@@ -47,15 +47,14 @@ export default function AuthCallbackPage() {
           const role = updatedProfile?.role || "customer";
           const status = updatedProfile?.status || "approved";
 
-          // Handle pending vendor/wholesaler
-          if ((role === "vendor" || role === "wholesaler") && status === "pending") {
+          if (role === "vendor" && status === "pending") {
             router.push("/auth?error=pending_approval");
             return;
           }
 
           const redirects: Record<string, string> = {
             admin: "/admin", super_admin: "/admin",
-            vendor: "/vendor", wholesaler: "/wholesaler",
+            vendor: "/vendor",
           };
 
           // Use redirect parameter if provided, otherwise use role-based redirect

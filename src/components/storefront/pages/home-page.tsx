@@ -41,7 +41,7 @@ const fallbackSections: HomepageSection[] = [
       slides: [
         { image_url: "/images/hero/hero-1.jpg", heading: "Industrial-Grade Parts", subheading: "Heavy-duty components built for performance", cta_text: "Shop Now", cta_link: "/products" },
         { image_url: "/images/hero/hero-2.jpg", heading: "Certified Quality", subheading: "OEM & aftermarket solutions for every vehicle", cta_text: "Explore", cta_link: "/products?sort=newest" },
-        { image_url: "/images/hero/hero-3.jpg", heading: "Bulk Pricing", subheading: "Wholesale rates for workshops and fleets", cta_text: "View Collection", cta_link: "/products" },
+        { image_url: "/images/hero/hero-3.jpg", heading: "Bulk Pricing", subheading: "Bulk rates for workshops and fleets", cta_text: "View Collection", cta_link: "/products" },
       ],
     },
     sort_order: 0,

@@ -108,7 +108,7 @@ export type Database = {
       };
     };
     Enums: {
-      user_role: "customer" | "admin" | "wholesaler" | "vendor" | "super_admin";
+      user_role: "customer" | "admin" | "vendor" | "super_admin";
       product_status: "draft" | "active";
       payment_status: "pending" | "paid" | "failed" | "refunded";
       fulfillment_status:
@@ -128,7 +128,7 @@ export interface Profile {
   full_name: string;
   phone: string | null;
   avatar_url: string | null;
-  role: "customer" | "admin" | "wholesaler" | "vendor" | "super_admin";
+  role: "customer" | "admin" | "vendor" | "super_admin";
   status: "pending" | "approved" | "suspended" | "rejected";
   created_at: string;
   updated_at: string;
@@ -568,64 +568,7 @@ export interface VendorWalletTransaction {
   created_at: string;
 }
 
-// Wholesaler Types
-export interface WholesalerProfile {
-  id: string;
-  user_id: string;
-  business_name: string;
-  business_description: string | null;
-  business_logo_url: string | null;
-  business_address: string | null;
-  business_phone: string | null;
-  business_email: string | null;
-  tax_id: string | null;
-  gst_number: string | null;
-  pan_number: string | null;
-  min_order_amount: number;
-  credit_limit: number;
-  credit_used: number;
-  payment_terms_days: number;
-  status: "pending" | "approved" | "suspended" | "rejected";
-  verification_status: "unverified" | "pending" | "verified" | "rejected";
-  rating: number | null;
-  total_sales: number;
-  total_orders: number;
-  created_at: string;
-  updated_at: string;
-  user?: Profile;
-}
-
-export interface WholesalePricing {
-  id: string;
-  product_id: string;
-  wholesaler_id: string | null;
-  min_quantity: number;
-  max_quantity: number | null;
-  price_per_unit: number;
-  created_at: string;
-  product?: Product;
-}
-
-export interface RfqRequest {
-  id: string;
-  customer_id: string;
-  wholesaler_id: string | null;
-  product_id: string | null;
-  product_name: string;
-  quantity: number;
-  specifications: Record<string, unknown> | null;
-  target_price: number | null;
-  notes: string | null;
-  status: "pending" | "quoted" | "accepted" | "rejected" | "expired";
-  quoted_price: number | null;
-  quoted_at: string | null;
-  valid_until: string | null;
-  created_at: string;
-  updated_at: string;
-  customer?: Profile;
-  wholesaler?: WholesalerProfile;
-  product?: Product;
-}
+// Enterprise Tables from Supabase (4th migration)
 
 // Customer Wallet Types
 export interface CustomerWallet {
@@ -739,12 +682,10 @@ export interface VendorSubscription {
 export interface SuperAdminDashboard {
   totalUsers: number;
   totalVendors: number;
-  totalWholesalers: number;
   totalProducts: number;
   totalOrders: number;
   totalRevenue: number;
   pendingVendors: number;
-  pendingWholesalers: number;
 }
 
 // Vendor Dashboard Types
@@ -753,17 +694,6 @@ export interface VendorDashboard {
   totalOrders: number;
   totalProducts: number;
   averageOrderValue: number;
-}
-
-// Wholesaler Dashboard Types
-export interface WholesalerDashboard {
-  totalSales: number;
-  totalOrders: number;
-  creditLimit: number;
-  creditUsed: number;
-  rfqCount: number;
-  acceptedCount: number;
-  conversionRate: number;
 }
 
 // Order status colors
@@ -786,11 +716,4 @@ export const VENDOR_STATUS_COLORS: Record<string, string> = {
   rejected: "bg-gray-100 text-gray-800",
 };
 
-// RFQ Status Colors
-export const RFQ_STATUS_COLORS: Record<string, string> = {
-  pending: "bg-yellow-100 text-yellow-800",
-  quoted: "bg-blue-100 text-blue-800",
-  accepted: "bg-green-100 text-green-800",
-  rejected: "bg-red-100 text-red-800",
-  expired: "bg-gray-100 text-gray-800",
-};
+

@@ -5,7 +5,6 @@ import { motion } from "framer-motion";
 import {
   Shield,
   Store,
-  Building2,
   Users,
   Package,
   ShoppingCart,
@@ -18,26 +17,22 @@ import {
   Flag,
   LayoutDashboard,
 } from "lucide-react";
-import { SuperAdminDashboard, FeatureFlag, SystemHealth } from "@/lib/types";
+import { FeatureFlag, SystemHealth } from "@/lib/types";
 
-const mockDashboard: SuperAdminDashboard = {
+const mockDashboard = {
   totalUsers: 12847,
   totalVendors: 156,
-  totalWholesalers: 43,
   totalProducts: 8923,
   totalOrders: 45678,
   totalRevenue: 2847560,
   pendingVendors: 8,
-  pendingWholesalers: 3,
 };
 
 const mockFeatureFlags: FeatureFlag[] = [
   { id: "1", name: "vendor_marketplace", description: "Enable vendor marketplace features", is_enabled: true, target_roles: [], created_at: "2024-01-01T00:00:00Z", updated_at: "2024-01-01T00:00:00Z" },
-  { id: "2", name: "wholesaler_portal", description: "Enable wholesaler portal features", is_enabled: true, target_roles: [], created_at: "2024-01-01T00:00:00Z", updated_at: "2024-01-01T00:00:00Z" },
-  { id: "3", name: "ai_assistants", description: "Enable AI assistant features", is_enabled: true, target_roles: [], created_at: "2024-01-01T00:00:00Z", updated_at: "2024-01-01T00:00:00Z" },
-  { id: "4", name: "advanced_analytics", description: "Enable advanced analytics dashboard", is_enabled: true, target_roles: [], created_at: "2024-01-01T00:00:00Z", updated_at: "2024-01-01T00:00:00Z" },
-  { id: "5", name: "multi_warehouse", description: "Enable multi-warehouse management", is_enabled: false, target_roles: [], created_at: "2024-01-01T00:00:00Z", updated_at: "2024-01-01T00:00:00Z" },
-  { id: "6", name: "rfq_system", description: "Enable Request for Quote system", is_enabled: true, target_roles: [], created_at: "2024-01-01T00:00:00Z", updated_at: "2024-01-01T00:00:00Z" },
+  { id: "2", name: "ai_assistants", description: "Enable AI assistant features", is_enabled: true, target_roles: [], created_at: "2024-01-01T00:00:00Z", updated_at: "2024-01-01T00:00:00Z" },
+  { id: "3", name: "advanced_analytics", description: "Enable advanced analytics dashboard", is_enabled: true, target_roles: [], created_at: "2024-01-01T00:00:00Z", updated_at: "2024-01-01T00:00:00Z" },
+  { id: "4", name: "multi_warehouse", description: "Enable multi-warehouse management", is_enabled: false, target_roles: [], created_at: "2024-01-01T00:00:00Z", updated_at: "2024-01-01T00:00:00Z" },
   { id: "7", name: "loyalty_program", description: "Enable loyalty and rewards program", is_enabled: true, target_roles: [], created_at: "2024-01-01T00:00:00Z", updated_at: "2024-01-01T00:00:00Z" },
   { id: "8", name: "gift_cards", description: "Enable gift card functionality", is_enabled: true, target_roles: [], created_at: "2024-01-01T00:00:00Z", updated_at: "2024-01-01T00:00:00Z" },
 ];
@@ -93,12 +88,10 @@ export default function SuperAdminPage() {
   const stats = [
     { label: "Total Users", value: mockDashboard.totalUsers.toLocaleString(), icon: Users, color: "blue" },
     { label: "Vendors", value: mockDashboard.totalVendors.toString(), icon: Store, color: "purple" },
-    { label: "Wholesalers", value: mockDashboard.totalWholesalers.toString(), icon: Building2, color: "orange" },
     { label: "Products", value: mockDashboard.totalProducts.toLocaleString(), icon: Package, color: "green" },
     { label: "Orders", value: mockDashboard.totalOrders.toLocaleString(), icon: ShoppingCart, color: "indigo" },
     { label: "Revenue", value: `$${(mockDashboard.totalRevenue / 1000000).toFixed(2)}M`, icon: DollarSign, color: "emerald" },
     { label: "Pending Vendors", value: mockDashboard.pendingVendors.toString(), icon: Clock, color: "yellow" },
-    { label: "Pending Wholesalers", value: mockDashboard.pendingWholesalers.toString(), icon: AlertTriangle, color: "red" },
   ];
 
   return (
@@ -163,7 +156,6 @@ export default function SuperAdminPage() {
               <div className="space-y-4">
                 {[
                   { label: "Vendor Growth (MoM)", value: "+12.5%" },
-                  { label: "Wholesaler Growth (MoM)", value: "+8.3%" },
                   { label: "Revenue Growth (MoM)", value: "+23.1%" },
                   { label: "Customer Acquisition Cost", value: "$42.50" },
                   { label: "Customer Lifetime Value", value: "$1,245" },
@@ -269,7 +261,6 @@ export default function SuperAdminPage() {
               { action: "Vendor Approved", user: "Admin", entity: "TechWorld Electronics", time: "2 hours ago" },
               { action: "Feature Flag Updated", user: "Super Admin", entity: "multi_warehouse", time: "5 hours ago" },
               { action: "Product Approved", user: "Admin", entity: "Wireless Earbuds Pro", time: "1 day ago" },
-              { action: "Wholesaler Approved", user: "Admin", entity: "Global Trade Corp", time: "2 days ago" },
               { action: "Commission Rate Changed", user: "Super Admin", entity: "Fashion Hub (10% → 12%)", time: "3 days ago" },
               { action: "System Health Alert", user: "System", entity: "AI Service degraded", time: "3 days ago" },
             ].map((log, i) => (

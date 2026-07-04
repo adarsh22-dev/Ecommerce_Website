@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     template: "%s | ECOM",
   },
   description:
-    "A multi-tenant commerce platform for B2C, B2B, marketplace, vendor, and wholesaler experiences.",
+    "A multi-tenant commerce platform for B2C, B2B, marketplace, and vendor experiences.",
   keywords: ["enterprise commerce", "multi-tenant commerce", "b2b commerce", "marketplace platform"],
   openGraph: {
     type: "website",
