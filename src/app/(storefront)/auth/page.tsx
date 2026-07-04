@@ -23,7 +23,7 @@ export default function AuthPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const redirectTo = searchParams.get("redirect") || "/account";
+  const redirectTo = searchParams.get("redirect") || "/";
 
   const getRoleRedirect = (role?: string) => {
     switch (role) {
