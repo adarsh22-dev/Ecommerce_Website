@@ -38,7 +38,7 @@ export default function AdminLoginPage() {
         if (authUser) {
           const { data: profile } = await supabase
             .from("profiles")
-            .select("role")
+            .select("role, status")
             .eq("id", authUser.id)
             .single();
           if (!profile || (profile.role !== "admin" && profile.role !== "super_admin")) {

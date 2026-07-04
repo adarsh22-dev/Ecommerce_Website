@@ -21,7 +21,7 @@ export default function AuthCallbackPage() {
           // Try to create/ensure profile exists for OAuth users
           const { data: profile, error: profileError } = await supabase
             .from("profiles")
-            .select("role")
+            .select("role, status")
             .eq("id", session.user.id)
             .single();
 
@@ -38,7 +38,7 @@ export default function AuthCallbackPage() {
           // Get the updated profile to check role
           const { data: updatedProfile } = await supabase
             .from("profiles")
-            .select("role")
+            .select("role, status")
             .eq("id", session.user.id)
             .single();
 

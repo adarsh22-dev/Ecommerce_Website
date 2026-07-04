@@ -87,7 +87,7 @@ export default function AuthPage() {
           if (authUser) {
             const { data: profile } = await supabase
               .from("profiles")
-              .select("role")
+              .select("role, status")
               .eq("id", authUser.id)
               .single();
             if (profile && (profile.role === "vendor" || profile.role === "wholesaler") && profile.status === "pending") {
@@ -115,7 +115,7 @@ export default function AuthPage() {
             if (supabase && supabase.auth) {
               const { data: profile } = await supabase
                 .from("profiles")
-                .select("role")
+                .select("role, status")
                 .eq("id", result.user.id)
                 .single();
               if (profile && (profile.role === "vendor" || profile.role === "wholesaler") && profile.status === "pending") {
